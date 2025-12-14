@@ -3,97 +3,35 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Portal 8ºB </title>
+    <title>Portal 8ºB</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     
     <style>
-        body { 
-            font-family: 'Outfit', sans-serif; 
-            background-color: #030712; 
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 40%);
-            color: #f3f4f6; 
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+        body { font-family: 'Outfit', sans-serif; background-color: #030712; background-image: radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 40%); color: #f3f4f6; min-height: 100vh; overflow-x: hidden; }
         .font-display { font-family: 'Space Grotesk', sans-serif; }
-        
-
-        .glass-panel {
-            background: rgba(17, 24, 39, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .input-glass {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: white;
-            transition: all 0.3s;
-        }
+        .glass-panel { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; }
+        .input-glass { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.15); color: white; transition: all 0.3s; }
         .input-glass:focus { border-color: #8b5cf6; box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); outline: none; }
-
-        
-        .btn-vivid {
-            background: linear-gradient(90deg, #2563eb, #9333ea);
-            color: white;
-            transition: all 0.3s ease-in-out;
-            border: 1px solid transparent;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .btn-vivid:hover {
-            background: #00ff88 !important; 
-            color: #000000 !important;
-            box-shadow: 0 0 25px rgba(0, 255, 136, 0.6);
-            border-color: #00ff88;
-            transform: scale(1.02);
-        }
-        .btn-vivid:active {
-            background: #000000 !important;
-            color: #00ff88 !important;
-            transform: scale(0.95);
-        }
-
-        
-        .btn-upload {
-            border: 2px dashed rgba(255,255,255,0.2);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: rgba(255,255,255,0.5);
-            transition: all 0.3s;
-            cursor: pointer;
-            min-height: 140px;
-        }
+        .btn-vivid { background: linear-gradient(90deg, #2563eb, #9333ea); color: white; transition: all 0.3s ease-in-out; border: 1px solid transparent; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-vivid:hover { background: #00ff88 !important; color: #000000 !important; box-shadow: 0 0 25px rgba(0, 255, 136, 0.6); border-color: #00ff88; transform: scale(1.02); }
+        .btn-upload { border: 2px dashed rgba(255,255,255,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); transition: all 0.3s; cursor: pointer; min-height: 80px; }
         .btn-upload:hover { border-color: #00ff88; color: #00ff88; background: rgba(0, 255, 136, 0.05); }
         .uploading { animation: pulse 1.5s infinite; border-color: #8b5cf6; color: #8b5cf6; }
-
-        
         .slide-in-top { animation: slide-in-top 1.2s cubic-bezier(0.250, 0.460, 0.450, 0.940) both; }
-        @keyframes slide-in-top { 
-            0% { transform: translateY(-100px) scale(0.5); opacity: 0; letter-spacing: 20px; filter: blur(10px); } 
-            100% { transform: translateY(0) scale(1); opacity: 1; letter-spacing: normal; filter: blur(0); } 
-        }
-        
+        @keyframes slide-in-top { 0% { transform: translateY(-100px) scale(0.5); opacity: 0; letter-spacing: 20px; filter: blur(10px); } 100% { transform: translateY(0) scale(1); opacity: 1; letter-spacing: normal; filter: blur(0); } }
         .pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: scale(0.8); }
         @keyframes popIn { to { opacity: 1; transform: scale(1); } }
-        
         .fade-in-slow { animation: fadeIn 2s ease-in forwards; opacity: 0; animation-delay: 0.5s; }
         @keyframes fadeIn { to { opacity: 1; } }
-
-        
         .xp-bar-fill { background: linear-gradient(90deg, #3b82f6, #8b5cf6); transition: width 1s ease-out; }
         .calendar-day { min-height: 40px; border-radius: 6px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; position: relative; }
         .current-day { background: #8b5cf6; color: white; font-weight: bold; box-shadow: 0 0 10px rgba(139, 92, 246, 0.5); }
         .has-event::after { content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; border-radius: 50%; background: #00ff88; }
-        .list-item:hover { background: rgba(255,255,255,0.05); padding-left: 1rem; transition: all 0.2s; }
+        .list-item { transition: all 0.2s; }
+        .list-item:hover { background: rgba(255,255,255,0.05); padding-left: 1rem; }
         .hidden { display: none !important; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
@@ -105,18 +43,15 @@
     <div id="auth-screen" class="flex items-center justify-center min-h-screen p-4 relative z-50">
         <div class="glass-panel w-full max-w-md p-8 rounded-2xl border-t border-white/10 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-70"></div>
-            
             <div class="text-center mb-8">
-                <h1 class="font-display text-6xl font-bold mb-2 tracking-tighter text-white slide-in-top" style="text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);">NEXUS</h1>
-                <p class="text-blue-400 font-bold tracking-widest text-xs uppercase fade-in-slow">Portal Oficial 8ºB</p>
+                <h1 class="font-display text-5xl font-bold mb-2 tracking-tighter text-white slide-in-top" style="text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);">PORTAL 8ºB</h1>
+                <p class="text-blue-400 font-bold tracking-widest text-xs uppercase fade-in-slow">Sistema Oficial</p>
             </div>
-
             <form id="login-form" class="space-y-4 fade-in-slow">
                 <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">E-mail</label><input type="email" id="email" class="input-glass w-full px-4 py-3 rounded-xl mt-1" required></div>
                 <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Senha</label><input type="password" id="password" class="input-glass w-full px-4 py-3 rounded-xl mt-1" required></div>
                 <button type="submit" id="btn-login" class="btn-vivid w-full py-4 rounded-xl shadow-lg mt-4 cursor-pointer">ACESSAR SISTEMA</button>
             </form>
-
             <div class="mt-6 text-center fade-in-slow"><button id="btn-toggle-register" class="text-slate-500 text-sm hover:text-white transition-colors">Não tem conta? <span class="text-purple-400">Criar cadastro</span></button></div>
             <p id="auth-error" class="text-red-400 text-center text-sm mt-4 hidden"></p>
         </div>
@@ -146,7 +81,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="md:col-span-2 glass-panel p-6 rounded-2xl relative overflow-hidden group">
                         <div class="absolute -right-20 -top-20 w-60 h-60 bg-purple-600 rounded-full blur-[80px] opacity-20"></div>
-                        <h3 class="text-2xl font-display font-bold mb-2">Central 8ºB</h3>
+                        <h3 class="text-2xl font-display font-bold mb-2">Portal 8ºB</h3>
                         <p class="text-slate-300">Bem-vindo ao sistema oficial.</p>
                     </div>
                     
@@ -161,8 +96,13 @@
                     </div>
                     
                     <div class="glass-panel p-4 rounded-2xl">
-                        <h3 class="font-bold text-pink-400 mb-4"><i class="fas fa-download mr-2"></i>Materiais</h3>
-                        <div id="downloads-list" class="space-y-2 max-h-40 overflow-y-auto"><p class="text-slate-500 text-sm">Carregando...</p></div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-pink-400"><i class="fas fa-download mr-2"></i>Materiais</h3>
+                            <p id="upload-material-status" class="text-xs text-green-400 hidden animate-pulse">Enviando...</p>
+                        </div>
+                        <div id="downloads-container" class="space-y-2 max-h-60 overflow-y-auto">
+                            <div id="downloads-list" class="space-y-2"></div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -183,16 +123,12 @@
                     <h3 class="text-2xl font-bold font-display">Galeria</h3>
                     <p id="upload-status" class="text-xs text-green-400 hidden animate-pulse">Enviando foto...</p>
                 </div>
-                
-                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    </div>
+                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
             </section>
-
         </main>
     </div>
 
     <script>
-        
         const SUPABASE_URL = 'https://gysljyxzlbwdkapjbrcu.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_4wYz4Ziwq-p2Izh2jX-ZJA_9xQJR0cS'; 
         
@@ -200,7 +136,6 @@
         let currentUser = null;
         let currentProfile = null;
 
-        
         const loginForm = document.getElementById('login-form');
         const authScreen = document.getElementById('auth-screen');
         const appScreen = document.getElementById('app-screen');
@@ -208,7 +143,7 @@
 
         document.getElementById('btn-toggle-register').addEventListener('click', () => {
             isRegistering = !isRegistering;
-            document.querySelector('h1').textContent = isRegistering ? "CADASTRO" : "Portal 8B";
+            document.querySelector('h1').textContent = isRegistering ? "CADASTRO" : "PORTAL 8ºB";
             document.getElementById('btn-login').textContent = isRegistering ? "CRIAR CONTA" : "ACESSAR SISTEMA";
             document.getElementById('btn-toggle-register').innerHTML = isRegistering ? 'Voltar para <span class="text-purple-400">Login</span>' : 'Não tem conta? <span class="text-purple-400">Criar cadastro</span>';
         });
@@ -253,66 +188,34 @@
 
         async function loadDashboardData() { renderMiniCalendar(); loadDownloads(); loadRanking(); loadGallery(); }
 
-        
         async function loadRanking() {
             const list = document.getElementById('ranking-list');
-            
             const { data } = await client.from('profiles').select('*').order('xp', { ascending: false }).limit(20);
             list.innerHTML = '';
-            
             let position = 1;
-            
             if(data) {
                 data.forEach((user) => {
-                    
                     if (user.email.includes('guilhermefontelas09')) return; 
-                    
-                    
                     if (position > 10) return;
-
                     let color = position === 1 ? 'text-yellow-400' : (position === 2 ? 'text-gray-300' : (position === 3 ? 'text-amber-600' : 'text-slate-400'));
-                    
-                    list.innerHTML += `
-                        <div class="flex items-center gap-3 border-b border-white/5 pb-2">
-                            <span class="font-bold ${color} text-sm w-4">#${position}</span>
-                            <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-white">${user.avatar_text}</div>
-                            <span class="text-xs text-white flex-1 truncate">${user.email.split('@')[0]}</span>
-                            <span class="text-xs font-bold text-purple-400">${user.xp} XP</span>
-                        </div>`;
-                    
+                    list.innerHTML += `<div class="flex items-center gap-3 border-b border-white/5 pb-2"><span class="font-bold ${color} text-sm w-4">#${position}</span><div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-white">${user.avatar_text}</div><span class="text-xs text-white flex-1 truncate">${user.email.split('@')[0]}</span><span class="text-xs font-bold text-purple-400">${user.xp} XP</span></div>`;
                     position++;
                 });
             }
         }
 
-       
         async function loadGallery() {
             const grid = document.getElementById('gallery-grid');
             const { data } = await client.from('gallery').select('*').order('created_at', { ascending: false });
-            
             let html = '';
-
             if (currentProfile && currentProfile.is_admin) {
-                html += `
-                    <label class="btn-upload glass-panel rounded-xl" for="file-upload" id="upload-label">
-                        <i class="fas fa-plus text-3xl mb-2"></i>
-                        <span class="text-xs font-bold uppercase">Adicionar Foto</span>
-                        <input type="file" id="file-upload" accept="image/*" class="hidden">
-                    </label>
-                `;
+                html += `<label class="btn-upload glass-panel rounded-xl" for="file-upload" id="upload-label"><i class="fas fa-plus text-3xl mb-2"></i><span class="text-xs font-bold uppercase">Adicionar Foto</span><input type="file" id="file-upload" accept="image/*" class="hidden"></label>`;
             }
-
             if(data && data.length > 0) {
-                data.forEach(img => {
-                    html += `
-                        <div class="glass-panel rounded-xl overflow-hidden cursor-pointer group pop-in" onclick="window.open('${img.image_url}', '_blank')">
-                            <div class="h-40 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style="background-image: url('${img.image_url}')"></div>
-                        </div>`;
-                });
+                data.forEach(img => { html += `<div class="glass-panel rounded-xl overflow-hidden cursor-pointer group pop-in" onclick="window.open('${img.image_url}', '_blank')"><div class="h-40 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style="background-image: url('${img.image_url}')"></div></div>`; });
             } else if (!currentProfile || !currentProfile.is_admin) {
                 html += `<div class="col-span-2 text-slate-500 text-sm flex items-center">Galeria vazia.</div>`;
             }
-
             grid.innerHTML = html;
             const fileInput = document.getElementById('file-upload');
             if (fileInput) fileInput.addEventListener('change', handleUpload);
@@ -325,24 +228,74 @@
             const label = document.getElementById('upload-label');
             status.textContent = "Enviando..."; status.classList.remove('hidden');
             label.classList.add('uploading');
-            label.innerHTML = `<i class="fas fa-spinner fa-spin text-3xl mb-2"></i><span class="text-xs">Enviando...</span>`;
-
             try {
                 const fileName = `foto_${Date.now()}`;
                 const { data, error } = await client.storage.from('images').upload(fileName, file);
                 if (error) throw error;
                 const { data: { publicUrl } } = client.storage.from('images').getPublicUrl(fileName);
                 await client.from('gallery').insert({ title: 'Nova Foto', image_url: publicUrl });
-                status.textContent = "Foto enviada!";
                 await loadGallery();
-                setTimeout(() => status.classList.add('hidden'), 2000);
-            } catch (error) {
-                alert("Erro: " + error.message);
-                status.classList.add('hidden');
-                loadGallery();
-            }
+                setTimeout(() => { status.classList.add('hidden'); }, 2000);
+            } catch (error) { alert("Erro: " + error.message); status.classList.add('hidden'); loadGallery(); }
         }
 
+        async function loadDownloads() {
+            const container = document.getElementById('downloads-container');
+            const list = document.getElementById('downloads-list');
+            const { data } = await client.from('downloads').select('*').order('created_at', { ascending: false });
+            
+            let uploadHtml = '';
+            if (currentProfile && currentProfile.is_admin) {
+                uploadHtml = `
+                    <label class="btn-upload glass-panel rounded-lg mb-4" for="material-upload" id="material-label" style="min-height: 60px; border-style: dashed;">
+                        <i class="fas fa-plus text-xl mb-1"></i>
+                        <span class="text-[10px] font-bold uppercase">Adicionar Material</span>
+                        <input type="file" id="material-upload" class="hidden">
+                    </label>
+                `;
+            }
+
+            let itemsHtml = '';
+            if(!data || data.length === 0) { 
+                itemsHtml = '<p class="text-slate-500 text-xs">Sem arquivos.</p>'; 
+            } else {
+                data.forEach(item => { 
+                    itemsHtml += `<div class="list-item p-2 rounded flex items-center gap-3 cursor-pointer border-b border-white/5" onclick="window.open('${item.link}', '_blank')"><div class="w-8 h-8 rounded bg-red-500/20 flex items-center justify-center text-red-400 flex-shrink-0"><i class="fas fa-file-pdf"></i></div><div class="overflow-hidden"><p class="font-bold text-xs truncate text-white">${item.title}</p><p class="text-[10px] text-slate-400">${item.category || 'Arquivo'}</p></div></div>`; 
+                });
+            }
+
+            container.innerHTML = uploadHtml + '<div id="actual-list">' + itemsHtml + '</div>';
+
+            const materialInput = document.getElementById('material-upload');
+            if (materialInput) materialInput.addEventListener('change', handleMaterialUpload);
+        }
+
+        async function handleMaterialUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const title = prompt("Digite o nome do material (ex: Livro de Matemática):", file.name);
+            if (!title) return;
+
+            const status = document.getElementById('upload-material-status');
+            const label = document.getElementById('material-label');
+            
+            status.textContent = "Enviando..."; status.classList.remove('hidden');
+            if(label) {
+                label.classList.add('uploading');
+                label.innerHTML = `<i class="fas fa-spinner fa-spin text-xl mb-1"></i><span class="text-[10px]">...</span>`;
+            }
+
+            try {
+                const fileName = `doc_${Date.now()}_${file.name}`;
+                const { data, error } = await client.storage.from('materials').upload(fileName, file);
+                if (error) throw error;
+                const { data: { publicUrl } } = client.storage.from('materials').getPublicUrl(fileName);
+                await client.from('downloads').insert({ title: title, category: 'Material', link: publicUrl });
+                await loadDownloads();
+                setTimeout(() => { status.classList.add('hidden'); }, 2000);
+            } catch (error) { alert("Erro: " + error.message); status.classList.add('hidden'); loadDownloads(); }
+        }
 
         async function renderMiniCalendar() {
             const date = new Date(); const year = date.getFullYear(); const month = date.getMonth();
@@ -361,14 +314,6 @@
                 const hasEvent = events.some(e => e.event_date === dateStr); const isToday = (d === today);
                 grid.innerHTML += `<div class="calendar-day ${isToday ? 'current-day' : ''} ${hasEvent ? 'has-event' : ''}">${d}</div>`;
             }
-        }
-
-        async function loadDownloads() {
-            const list = document.getElementById('downloads-list');
-            const { data } = await client.from('downloads').select('*').order('created_at', { ascending: false }).limit(5);
-            list.innerHTML = '';
-            if(!data || data.length === 0) { list.innerHTML = '<p class="text-slate-500 text-xs">Sem arquivos.</p>'; return; }
-            data.forEach(item => { list.innerHTML += `<div class="list-item p-2 rounded flex items-center gap-3 cursor-pointer" onclick="window.open('${item.link}', '_blank')"><i class="fas fa-file-pdf text-red-400"></i><div class="overflow-hidden"><p class="font-bold text-xs truncate text-white">${item.title}</p></div></div>`; });
         }
         
         const chatBox = document.getElementById('chat-box');
