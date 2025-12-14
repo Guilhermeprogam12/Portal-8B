@@ -12,33 +12,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* BASE */
         body { font-family: 'Outfit', sans-serif; background-color: #030712; background-image: radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 40%); color: #f3f4f6; min-height: 100vh; overflow-x: hidden; }
         .font-display { font-family: 'Space Grotesk', sans-serif; }
-        
-        /* ESTILOS DE VIDRO E INPUTS */
         .glass-panel { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; }
         .input-glass { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.15); color: white; transition: all 0.3s; }
         .input-glass:focus { border-color: #8b5cf6; box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); outline: none; }
-        
-        /* BOTÕES */
         .btn-vivid { background: linear-gradient(90deg, #2563eb, #9333ea); color: white; transition: all 0.3s ease-in-out; border: 1px solid transparent; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
         .btn-vivid:hover { background: #00ff88 !important; color: #000000 !important; box-shadow: 0 0 25px rgba(0, 255, 136, 0.6); border-color: #00ff88; transform: scale(1.02); }
         .btn-upload { border: 2px dashed rgba(255,255,255,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); transition: all 0.3s; cursor: pointer; min-height: 80px; }
         .btn-upload:hover { border-color: #00ff88; color: #00ff88; background: rgba(0, 255, 136, 0.05); }
         .uploading { animation: pulse 1.5s infinite; border-color: #8b5cf6; color: #8b5cf6; }
-
-        /* CALENDÁRIO & CORES */
-        .calendar-day { min-height: 40px; border-radius: 6px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; position: relative; }
-        .current-day { background: #8b5cf6; color: white; font-weight: bold; box-shadow: 0 0 10px rgba(139, 92, 246, 0.5); }
-        
-        /* Bolinhas do Calendário */
-        .has-event::after { content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; border-radius: 50%; }
-        .evt-prova::after { background: #ec4899; box-shadow: 0 0 5px #ec4899; } /* Rosa */
-        .evt-trabalho::after { background: #3b82f6; box-shadow: 0 0 5px #3b82f6; } /* Azul */
-        .evt-festa::after { background: #a855f7; box-shadow: 0 0 5px #a855f7; } /* Roxo/Padrão */
-
-        /* ANIMAÇÕES */
         .slide-in-top { animation: slide-in-top 1.2s cubic-bezier(0.250, 0.460, 0.450, 0.940) both; }
         @keyframes slide-in-top { 0% { transform: translateY(-100px) scale(0.5); opacity: 0; letter-spacing: 20px; filter: blur(10px); } 100% { transform: translateY(0) scale(1); opacity: 1; letter-spacing: normal; filter: blur(0); } }
         .pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: scale(0.8); }
@@ -46,11 +29,29 @@
         .fade-in-slow { animation: fadeIn 2s ease-in forwards; opacity: 0; animation-delay: 0.5s; }
         @keyframes fadeIn { to { opacity: 1; } }
         .xp-bar-fill { background: linear-gradient(90deg, #3b82f6, #8b5cf6); transition: width 1s ease-out; }
-        .list-item:hover { background: rgba(255,255,255,0.05); padding-left: 1rem; transition: all 0.2s; }
+        
+        /* CALENDÁRIO */
+        .calendar-day { min-height: 40px; border-radius: 6px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; position: relative; }
+        
+        /* Dia Atual (Agora só borda, para não confundir) */
+        .current-day { border: 1px solid #8b5cf6; color: #a78bfa; font-weight: bold; background: rgba(139, 92, 246, 0.1); }
+        
+        /* Bolinhas dos Eventos */
+        .has-event::after { content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; border-radius: 50%; }
+        .evt-prova::after { background: #ec4899; box-shadow: 0 0 5px #ec4899; }      /* Rosa */
+        .evt-trabalho::after { background: #3b82f6; box-shadow: 0 0 5px #3b82f6; }   /* Azul */
+        .evt-simulado::after { background: #eab308; box-shadow: 0 0 5px #eab308; }   /* Amarelo */
+        .evt-gincana::after { background: #f97316; box-shadow: 0 0 5px #f97316; }    /* Laranja */
+        .evt-interclasse::after { background: #22c55e; box-shadow: 0 0 5px #22c55e; } /* Verde */
+
+        .list-item { transition: all 0.2s; }
+        .list-item:hover { background: rgba(255,255,255,0.05); padding-left: 1rem; }
         .hidden { display: none !important; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        
+        /* Scrollbar */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -112,10 +113,12 @@
                     <div class="glass-panel p-4 rounded-2xl">
                         <div class="flex justify-between items-center mb-2"><h3 class="font-bold text-blue-400"><i class="fas fa-calendar-alt mr-2"></i>Agenda</h3><span id="mini-month" class="text-xs font-bold uppercase">MÊS</span></div>
                         <div id="mini-calendar-grid" class="grid grid-cols-7 gap-1 text-center mb-3"></div>
-                        <div class="flex justify-between text-[10px] text-slate-400 border-t border-white/10 pt-2">
-                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-pink-500 shadow-[0_0_5px_#ec4899]"></span> Prova</div>
+                        <div class="grid grid-cols-3 gap-2 text-[9px] text-slate-400 border-t border-white/10 pt-2">
                             <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_5px_#3b82f6]"></span> Trabalho</div>
-                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_5px_#a855f7]"></span> Outros</div>
+                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-eab308 shadow-[0_0_5px_#eab308]" style="background:#eab308"></span> Simulado</div>
+                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-ec4899 shadow-[0_0_5px_#ec4899]" style="background:#ec4899"></span> Prova</div>
+                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-f97316 shadow-[0_0_5px_#f97316]" style="background:#f97316"></span> Gincana</div>
+                            <div class="flex items-center gap-1 col-span-2"><span class="w-2 h-2 rounded-full bg-22c55e shadow-[0_0_5px_#22c55e]" style="background:#22c55e"></span> Interclasse</div>
                         </div>
                     </div>
                     
@@ -206,9 +209,7 @@
             setupChat(); loadDashboardData();
         }
 
-        async function loadDashboardData() { 
-            renderMiniCalendar(); loadDownloads(); loadRanking(); loadGallery(); loadNews(); 
-        }
+        async function loadDashboardData() { renderMiniCalendar(); loadDownloads(); loadRanking(); loadGallery(); loadNews(); }
 
         function sanitizeFileName(name) { return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_'); }
 
@@ -327,10 +328,15 @@
                 
                 let evtClass = '';
                 if(event) {
-                    evtClass = 'has-event'; // Padrão
-                    if(event.type === 'prova') evtClass += ' evt-prova';
-                    else if(event.type === 'trabalho') evtClass += ' evt-trabalho';
-                    else evtClass += ' evt-festa';
+                    evtClass = 'has-event';
+                    if(event.type) {
+                        const type = event.type.toLowerCase();
+                        if(type.includes('prova')) evtClass += ' evt-prova';
+                        else if(type.includes('trabalho')) evtClass += ' evt-trabalho';
+                        else if(type.includes('simulado')) evtClass += ' evt-simulado';
+                        else if(type.includes('gincana')) evtClass += ' evt-gincana';
+                        else if(type.includes('interclasse')) evtClass += ' evt-interclasse';
+                    }
                 }
 
                 grid.innerHTML += `<div class="calendar-day ${isToday ? 'current-day' : ''} ${evtClass}">${d}</div>`;
