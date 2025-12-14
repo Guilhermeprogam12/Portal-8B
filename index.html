@@ -188,6 +188,11 @@
 
         async function loadDashboardData() { renderMiniCalendar(); loadDownloads(); loadRanking(); loadGallery(); }
 
+        // --- FUNÇÃO PARA LIMPAR NOME DE ARQUIVO (A CORREÇÃO!) ---
+        function sanitizeFileName(name) {
+            return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_');
+        }
+
         async function loadRanking() {
             const list = document.getElementById('ranking-list');
             const { data } = await client.from('profiles').select('*').order('xp', { ascending: false }).limit(20);
@@ -229,7 +234,10 @@
             status.textContent = "Enviando..."; status.classList.remove('hidden');
             label.classList.add('uploading');
             try {
-                const fileName = `foto_${Date.now()}`;
+                // AQUI ESTÁ A MÁGICA DE LIMPAR O NOME
+                const cleanName = sanitizeFileName(file.name);
+                const fileName = `foto_${Date.now()}_${cleanName}`;
+                
                 const { data, error } = await client.storage.from('images').upload(fileName, file);
                 if (error) throw error;
                 const { data: { publicUrl } } = client.storage.from('images').getPublicUrl(fileName);
@@ -287,7 +295,10 @@
             }
 
             try {
-                const fileName = `doc_${Date.now()}_${file.name}`;
+                // AQUI TAMBÉM: LIMPANDO NOME DO MATERIAL
+                const cleanName = sanitizeFileName(file.name);
+                const fileName = `doc_${Date.now()}_${cleanName}`;
+                
                 const { data, error } = await client.storage.from('materials').upload(fileName, file);
                 if (error) throw error;
                 const { data: { publicUrl } } = client.storage.from('materials').getPublicUrl(fileName);
