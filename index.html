@@ -3,30 +3,92 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Portal 8ºB | Nexus</title>
+    <title>Portal 8ºB </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* DESIGN SYSTEM: NEO-GLASS DARK */
-        body { font-family: 'Outfit', sans-serif; background-color: #030712; background-image: radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 40%); color: #f3f4f6; min-height: 100vh; overflow-x: hidden; }
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background-color: #030712; 
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 40%);
+            color: #f3f4f6; 
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
         .font-display { font-family: 'Space Grotesk', sans-serif; }
-        .glass-panel { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; }
-        .input-glass { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.15); color: white; transition: all 0.3s; }
+        
+
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .input-glass {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            transition: all 0.3s;
+        }
         .input-glass:focus { border-color: #8b5cf6; box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); outline: none; }
-        .btn-vivid { background: linear-gradient(90deg, #2563eb, #9333ea); color: white; transition: all 0.3s ease-in-out; border: 1px solid transparent; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-vivid:hover { background: #00ff88 !important; color: #000000 !important; box-shadow: 0 0 25px rgba(0, 255, 136, 0.6); border-color: #00ff88; transform: scale(1.02); }
-        .btn-upload { border: 2px dashed rgba(255,255,255,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); transition: all 0.3s; cursor: pointer; min-height: 140px; }
+
+        
+        .btn-vivid {
+            background: linear-gradient(90deg, #2563eb, #9333ea);
+            color: white;
+            transition: all 0.3s ease-in-out;
+            border: 1px solid transparent;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-vivid:hover {
+            background: #00ff88 !important; 
+            color: #000000 !important;
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.6);
+            border-color: #00ff88;
+            transform: scale(1.02);
+        }
+        .btn-vivid:active {
+            background: #000000 !important;
+            color: #00ff88 !important;
+            transform: scale(0.95);
+        }
+
+        
+        .btn-upload {
+            border: 2px dashed rgba(255,255,255,0.2);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.5);
+            transition: all 0.3s;
+            cursor: pointer;
+            min-height: 140px;
+        }
         .btn-upload:hover { border-color: #00ff88; color: #00ff88; background: rgba(0, 255, 136, 0.05); }
         .uploading { animation: pulse 1.5s infinite; border-color: #8b5cf6; color: #8b5cf6; }
+
+        
         .slide-in-top { animation: slide-in-top 1.2s cubic-bezier(0.250, 0.460, 0.450, 0.940) both; }
-        @keyframes slide-in-top { 0% { transform: translateY(-100px) scale(0.5); opacity: 0; letter-spacing: 20px; filter: blur(10px); } 100% { transform: translateY(0) scale(1); opacity: 1; letter-spacing: normal; filter: blur(0); } }
+        @keyframes slide-in-top { 
+            0% { transform: translateY(-100px) scale(0.5); opacity: 0; letter-spacing: 20px; filter: blur(10px); } 
+            100% { transform: translateY(0) scale(1); opacity: 1; letter-spacing: normal; filter: blur(0); } 
+        }
+        
         .pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: scale(0.8); }
         @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+        
         .fade-in-slow { animation: fadeIn 2s ease-in forwards; opacity: 0; animation-delay: 0.5s; }
         @keyframes fadeIn { to { opacity: 1; } }
+
+        
         .xp-bar-fill { background: linear-gradient(90deg, #3b82f6, #8b5cf6); transition: width 1s ease-out; }
         .calendar-day { min-height: 40px; border-radius: 6px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; position: relative; }
         .current-day { background: #8b5cf6; color: white; font-weight: bold; box-shadow: 0 0 10px rgba(139, 92, 246, 0.5); }
@@ -43,15 +105,18 @@
     <div id="auth-screen" class="flex items-center justify-center min-h-screen p-4 relative z-50">
         <div class="glass-panel w-full max-w-md p-8 rounded-2xl border-t border-white/10 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-70"></div>
+            
             <div class="text-center mb-8">
                 <h1 class="font-display text-6xl font-bold mb-2 tracking-tighter text-white slide-in-top" style="text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);">NEXUS</h1>
                 <p class="text-blue-400 font-bold tracking-widest text-xs uppercase fade-in-slow">Portal Oficial 8ºB</p>
             </div>
+
             <form id="login-form" class="space-y-4 fade-in-slow">
                 <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">E-mail</label><input type="email" id="email" class="input-glass w-full px-4 py-3 rounded-xl mt-1" required></div>
                 <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Senha</label><input type="password" id="password" class="input-glass w-full px-4 py-3 rounded-xl mt-1" required></div>
                 <button type="submit" id="btn-login" class="btn-vivid w-full py-4 rounded-xl shadow-lg mt-4 cursor-pointer">ACESSAR SISTEMA</button>
             </form>
+
             <div class="mt-6 text-center fade-in-slow"><button id="btn-toggle-register" class="text-slate-500 text-sm hover:text-white transition-colors">Não tem conta? <span class="text-purple-400">Criar cadastro</span></button></div>
             <p id="auth-error" class="text-red-400 text-center text-sm mt-4 hidden"></p>
         </div>
@@ -84,14 +149,17 @@
                         <h3 class="text-2xl font-display font-bold mb-2">Central 8ºB</h3>
                         <p class="text-slate-300">Bem-vindo ao sistema oficial.</p>
                     </div>
+                    
                     <div class="glass-panel p-4 rounded-2xl row-span-2 flex flex-col">
                         <h3 class="font-bold text-yellow-400 mb-4"><i class="fas fa-crown mr-2"></i>Ranking XP</h3>
                         <div id="ranking-list" class="space-y-3 flex-1 overflow-y-auto"><p class="text-slate-500 text-sm">Carregando...</p></div>
                     </div>
+                    
                     <div class="glass-panel p-4 rounded-2xl">
                         <div class="flex justify-between items-center mb-2"><h3 class="font-bold text-blue-400"><i class="fas fa-calendar-alt mr-2"></i>Agenda</h3><span id="mini-month" class="text-xs font-bold uppercase">MÊS</span></div>
                         <div id="mini-calendar-grid" class="grid grid-cols-7 gap-1 text-center"></div>
                     </div>
+                    
                     <div class="glass-panel p-4 rounded-2xl">
                         <h3 class="font-bold text-pink-400 mb-4"><i class="fas fa-download mr-2"></i>Materiais</h3>
                         <div id="downloads-list" class="space-y-2 max-h-40 overflow-y-auto"><p class="text-slate-500 text-sm">Carregando...</p></div>
@@ -103,7 +171,10 @@
                 <div class="glass-panel flex-1 rounded-2xl flex flex-col overflow-hidden">
                     <div class="p-3 border-b border-white/10 bg-black/20 flex justify-between"><span class="font-bold text-sm">#chat-geral</span><span class="text-xs text-green-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400"></span> Online</span></div>
                     <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
-                    <form id="chat-form" class="p-3 bg-black/30 border-t border-white/10 flex gap-2"><input type="text" id="chat-msg" class="input-glass flex-1 px-4 py-2 rounded-lg text-sm" placeholder="Mensagem..." autocomplete="off"><button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg"><i class="fas fa-paper-plane"></i></button></form>
+                    <form id="chat-form" class="p-3 bg-black/30 border-t border-white/10 flex gap-2">
+                        <input type="text" id="chat-msg" class="input-glass flex-1 px-4 py-2 rounded-lg text-sm" placeholder="Mensagem..." autocomplete="off">
+                        <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg"><i class="fas fa-paper-plane"></i></button>
+                    </form>
                 </div>
             </section>
 
@@ -112,13 +183,16 @@
                     <h3 class="text-2xl font-bold font-display">Galeria</h3>
                     <p id="upload-status" class="text-xs text-green-400 hidden animate-pulse">Enviando foto...</p>
                 </div>
-                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+                
+                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    </div>
             </section>
 
         </main>
     </div>
 
     <script>
+        
         const SUPABASE_URL = 'https://gysljyxzlbwdkapjbrcu.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_4wYz4Ziwq-p2Izh2jX-ZJA_9xQJR0cS'; 
         
@@ -126,7 +200,7 @@
         let currentUser = null;
         let currentProfile = null;
 
-        // --- AUTH ---
+        
         const loginForm = document.getElementById('login-form');
         const authScreen = document.getElementById('auth-screen');
         const appScreen = document.getElementById('app-screen');
@@ -134,7 +208,7 @@
 
         document.getElementById('btn-toggle-register').addEventListener('click', () => {
             isRegistering = !isRegistering;
-            document.querySelector('h1').textContent = isRegistering ? "CADASTRO" : "NEXUS";
+            document.querySelector('h1').textContent = isRegistering ? "CADASTRO" : "Portal 8B";
             document.getElementById('btn-login').textContent = isRegistering ? "CRIAR CONTA" : "ACESSAR SISTEMA";
             document.getElementById('btn-toggle-register').innerHTML = isRegistering ? 'Voltar para <span class="text-purple-400">Login</span>' : 'Não tem conta? <span class="text-purple-400">Criar cadastro</span>';
         });
@@ -179,14 +253,45 @@
 
         async function loadDashboardData() { renderMiniCalendar(); loadDownloads(); loadRanking(); loadGallery(); }
 
-        // --- GALERIA SEGURA --
+        
+        async function loadRanking() {
+            const list = document.getElementById('ranking-list');
+            
+            const { data } = await client.from('profiles').select('*').order('xp', { ascending: false }).limit(20);
+            list.innerHTML = '';
+            
+            let position = 1;
+            
+            if(data) {
+                data.forEach((user) => {
+                    
+                    if (user.email.includes('guilhermefontelas09')) return; 
+                    
+                    
+                    if (position > 10) return;
+
+                    let color = position === 1 ? 'text-yellow-400' : (position === 2 ? 'text-gray-300' : (position === 3 ? 'text-amber-600' : 'text-slate-400'));
+                    
+                    list.innerHTML += `
+                        <div class="flex items-center gap-3 border-b border-white/5 pb-2">
+                            <span class="font-bold ${color} text-sm w-4">#${position}</span>
+                            <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-white">${user.avatar_text}</div>
+                            <span class="text-xs text-white flex-1 truncate">${user.email.split('@')[0]}</span>
+                            <span class="text-xs font-bold text-purple-400">${user.xp} XP</span>
+                        </div>`;
+                    
+                    position++;
+                });
+            }
+        }
+
+       
         async function loadGallery() {
             const grid = document.getElementById('gallery-grid');
             const { data } = await client.from('gallery').select('*').order('created_at', { ascending: false });
             
             let html = '';
 
-            // SÓ MOSTRA SE FOR ADMIN
             if (currentProfile && currentProfile.is_admin) {
                 html += `
                     <label class="btn-upload glass-panel rounded-xl" for="file-upload" id="upload-label">
@@ -199,7 +304,10 @@
 
             if(data && data.length > 0) {
                 data.forEach(img => {
-                    html += `<div class="glass-panel rounded-xl overflow-hidden cursor-pointer group pop-in" onclick="window.open('${img.image_url}', '_blank')"><div class="h-40 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style="background-image: url('${img.image_url}')"></div></div>`;
+                    html += `
+                        <div class="glass-panel rounded-xl overflow-hidden cursor-pointer group pop-in" onclick="window.open('${img.image_url}', '_blank')">
+                            <div class="h-40 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style="background-image: url('${img.image_url}')"></div>
+                        </div>`;
                 });
             } else if (!currentProfile || !currentProfile.is_admin) {
                 html += `<div class="col-span-2 text-slate-500 text-sm flex items-center">Galeria vazia.</div>`;
@@ -235,7 +343,7 @@
             }
         }
 
-        // --- EXTRAS ---
+
         async function renderMiniCalendar() {
             const date = new Date(); const year = date.getFullYear(); const month = date.getMonth();
             const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
@@ -261,8 +369,6 @@
             list.innerHTML = '';
             if(!data || data.length === 0) { list.innerHTML = '<p class="text-slate-500 text-xs">Sem arquivos.</p>'; return; }
             data.forEach(item => { list.innerHTML += `<div class="list-item p-2 rounded flex items-center gap-3 cursor-pointer" onclick="window.open('${item.link}', '_blank')"><i class="fas fa-file-pdf text-red-400"></i><div class="overflow-hidden"><p class="font-bold text-xs truncate text-white">${item.title}</p></div></div>`; });
-        }
-      async function loadRanking()
         }
         
         const chatBox = document.getElementById('chat-box');
