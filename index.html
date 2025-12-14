@@ -179,7 +179,7 @@
 
         async function loadDashboardData() { renderMiniCalendar(); loadDownloads(); loadRanking(); loadGallery(); }
 
-        // --- GALERIA SEGURA ---
+        // --- GALERIA SEGURA --
         async function loadGallery() {
             const grid = document.getElementById('gallery-grid');
             const { data } = await client.from('gallery').select('*').order('created_at', { ascending: false });
@@ -262,11 +262,7 @@
             if(!data || data.length === 0) { list.innerHTML = '<p class="text-slate-500 text-xs">Sem arquivos.</p>'; return; }
             data.forEach(item => { list.innerHTML += `<div class="list-item p-2 rounded flex items-center gap-3 cursor-pointer" onclick="window.open('${item.link}', '_blank')"><i class="fas fa-file-pdf text-red-400"></i><div class="overflow-hidden"><p class="font-bold text-xs truncate text-white">${item.title}</p></div></div>`; });
         }
-        async function loadRanking() {
-            const list = document.getElementById('ranking-list');
-            const { data } = await client.from('profiles').select('*').order('xp', { ascending: false }).limit(5);
-            list.innerHTML = '';
-            data.forEach((user, index) => { list.innerHTML += `<div class="flex items-center gap-3 border-b border-white/5 pb-2"><span class="font-bold ${index===0?'text-yellow-400':'text-slate-400'} text-sm w-4">#${index+1}</span><div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-white">${user.avatar_text}</div><span class="text-xs text-white flex-1 truncate">${user.email.split('@')[0]}</span><span class="text-xs font-bold text-purple-400">${user.xp} XP</span></div>`; });
+      async function loadRanking()
         }
         
         const chatBox = document.getElementById('chat-box');
