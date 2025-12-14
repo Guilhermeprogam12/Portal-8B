@@ -4,22 +4,41 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Portal 8ºB</title>
+    <link rel="icon" href="favicon.jpg" type="image/jpeg">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     
     <style>
+        /* BASE */
         body { font-family: 'Outfit', sans-serif; background-color: #030712; background-image: radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 40%); color: #f3f4f6; min-height: 100vh; overflow-x: hidden; }
         .font-display { font-family: 'Space Grotesk', sans-serif; }
+        
+        /* ESTILOS DE VIDRO E INPUTS */
         .glass-panel { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; }
         .input-glass { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.15); color: white; transition: all 0.3s; }
         .input-glass:focus { border-color: #8b5cf6; box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); outline: none; }
+        
+        /* BOTÕES */
         .btn-vivid { background: linear-gradient(90deg, #2563eb, #9333ea); color: white; transition: all 0.3s ease-in-out; border: 1px solid transparent; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
         .btn-vivid:hover { background: #00ff88 !important; color: #000000 !important; box-shadow: 0 0 25px rgba(0, 255, 136, 0.6); border-color: #00ff88; transform: scale(1.02); }
         .btn-upload { border: 2px dashed rgba(255,255,255,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); transition: all 0.3s; cursor: pointer; min-height: 80px; }
         .btn-upload:hover { border-color: #00ff88; color: #00ff88; background: rgba(0, 255, 136, 0.05); }
         .uploading { animation: pulse 1.5s infinite; border-color: #8b5cf6; color: #8b5cf6; }
+
+        /* CALENDÁRIO & CORES */
+        .calendar-day { min-height: 40px; border-radius: 6px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; position: relative; }
+        .current-day { background: #8b5cf6; color: white; font-weight: bold; box-shadow: 0 0 10px rgba(139, 92, 246, 0.5); }
+        
+        /* Bolinhas do Calendário */
+        .has-event::after { content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; border-radius: 50%; }
+        .evt-prova::after { background: #ec4899; box-shadow: 0 0 5px #ec4899; } /* Rosa */
+        .evt-trabalho::after { background: #3b82f6; box-shadow: 0 0 5px #3b82f6; } /* Azul */
+        .evt-festa::after { background: #a855f7; box-shadow: 0 0 5px #a855f7; } /* Roxo/Padrão */
+
+        /* ANIMAÇÕES */
         .slide-in-top { animation: slide-in-top 1.2s cubic-bezier(0.250, 0.460, 0.450, 0.940) both; }
         @keyframes slide-in-top { 0% { transform: translateY(-100px) scale(0.5); opacity: 0; letter-spacing: 20px; filter: blur(10px); } 100% { transform: translateY(0) scale(1); opacity: 1; letter-spacing: normal; filter: blur(0); } }
         .pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: scale(0.8); }
@@ -27,11 +46,7 @@
         .fade-in-slow { animation: fadeIn 2s ease-in forwards; opacity: 0; animation-delay: 0.5s; }
         @keyframes fadeIn { to { opacity: 1; } }
         .xp-bar-fill { background: linear-gradient(90deg, #3b82f6, #8b5cf6); transition: width 1s ease-out; }
-        .calendar-day { min-height: 40px; border-radius: 6px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; position: relative; }
-        .current-day { background: #8b5cf6; color: white; font-weight: bold; box-shadow: 0 0 10px rgba(139, 92, 246, 0.5); }
-        .has-event::after { content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; border-radius: 50%; background: #00ff88; }
-        .list-item { transition: all 0.2s; }
-        .list-item:hover { background: rgba(255,255,255,0.05); padding-left: 1rem; }
+        .list-item:hover { background: rgba(255,255,255,0.05); padding-left: 1rem; transition: all 0.2s; }
         .hidden { display: none !important; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
@@ -44,6 +59,7 @@
         <div class="glass-panel w-full max-w-md p-8 rounded-2xl border-t border-white/10 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-70"></div>
             <div class="text-center mb-8">
+                <img src="favicon.jpg" class="w-20 h-20 mx-auto mb-4 rounded-xl shadow-lg shadow-purple-500/20 slide-in-top" onerror="this.style.display='none'">
                 <h1 class="font-display text-5xl font-bold mb-2 tracking-tighter text-white slide-in-top" style="text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);">PORTAL 8ºB</h1>
                 <p class="text-blue-400 font-bold tracking-widest text-xs uppercase fade-in-slow">Sistema Oficial</p>
             </div>
@@ -79,25 +95,28 @@
 
             <section id="section-dashboard" class="page-section space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    
                     <div class="md:col-span-2 glass-panel p-6 rounded-2xl relative overflow-hidden group flex flex-col">
                         <div class="absolute -right-20 -top-20 w-60 h-60 bg-purple-600 rounded-full blur-[80px] opacity-20"></div>
                         <div class="flex justify-between items-center mb-4 z-10">
                             <h3 class="text-2xl font-display font-bold">Mural 8ºB</h3>
-                            <div id="admin-news-btn"></div> </div>
-                        <div id="news-feed" class="space-y-4 overflow-y-auto max-h-60 z-10">
-                            <p class="text-slate-400">Carregando avisos...</p>
+                            <div id="admin-news-btn"></div>
                         </div>
+                        <div id="news-feed" class="space-y-4 overflow-y-auto max-h-60 z-10 custom-scroll"><p class="text-slate-400">Carregando avisos...</p></div>
                     </div>
                     
                     <div class="glass-panel p-4 rounded-2xl row-span-2 flex flex-col">
                         <h3 class="font-bold text-yellow-400 mb-4"><i class="fas fa-crown mr-2"></i>Ranking XP</h3>
-                        <div id="ranking-list" class="space-y-3 flex-1 overflow-y-auto"><p class="text-slate-500 text-sm">Carregando...</p></div>
+                        <div id="ranking-list" class="space-y-3 flex-1 overflow-y-auto custom-scroll"><p class="text-slate-500 text-sm">Carregando...</p></div>
                     </div>
                     
                     <div class="glass-panel p-4 rounded-2xl">
                         <div class="flex justify-between items-center mb-2"><h3 class="font-bold text-blue-400"><i class="fas fa-calendar-alt mr-2"></i>Agenda</h3><span id="mini-month" class="text-xs font-bold uppercase">MÊS</span></div>
-                        <div id="mini-calendar-grid" class="grid grid-cols-7 gap-1 text-center"></div>
+                        <div id="mini-calendar-grid" class="grid grid-cols-7 gap-1 text-center mb-3"></div>
+                        <div class="flex justify-between text-[10px] text-slate-400 border-t border-white/10 pt-2">
+                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-pink-500 shadow-[0_0_5px_#ec4899]"></span> Prova</div>
+                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_5px_#3b82f6]"></span> Trabalho</div>
+                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_5px_#a855f7]"></span> Outros</div>
+                        </div>
                     </div>
                     
                     <div class="glass-panel p-4 rounded-2xl">
@@ -105,9 +124,7 @@
                             <h3 class="font-bold text-pink-400"><i class="fas fa-download mr-2"></i>Materiais</h3>
                             <p id="upload-material-status" class="text-xs text-green-400 hidden animate-pulse">Enviando...</p>
                         </div>
-                        <div id="downloads-container" class="space-y-2 max-h-60 overflow-y-auto">
-                            <div id="downloads-list" class="space-y-2"></div>
-                        </div>
+                        <div id="downloads-container" class="space-y-2 max-h-60 overflow-y-auto custom-scroll"><div id="downloads-list" class="space-y-2"></div></div>
                     </div>
                 </div>
             </section>
@@ -115,7 +132,7 @@
             <section id="section-chat" class="page-section hidden h-[75vh] flex flex-col">
                 <div class="glass-panel flex-1 rounded-2xl flex flex-col overflow-hidden">
                     <div class="p-3 border-b border-white/10 bg-black/20 flex justify-between"><span class="font-bold text-sm">#chat-geral</span><span class="text-xs text-green-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400"></span> Online</span></div>
-                    <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+                    <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scroll"></div>
                     <form id="chat-form" class="p-3 bg-black/30 border-t border-white/10 flex gap-2">
                         <input type="text" id="chat-msg" class="input-glass flex-1 px-4 py-2 rounded-lg text-sm" placeholder="Mensagem..." autocomplete="off">
                         <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg"><i class="fas fa-paper-plane"></i></button>
@@ -178,7 +195,6 @@
 
         async function enterApp() {
             authScreen.classList.add('hidden'); appScreen.classList.remove('hidden'); appScreen.classList.add('flex');
-            
             const { data: profile } = await client.from('profiles').select('*').eq('id', currentUser.id).single();
             if(profile) {
                 currentProfile = profile; 
@@ -187,63 +203,36 @@
                 document.getElementById('lvl-display').textContent = profile.level;
                 document.getElementById('xp-bar').style.width = `${(profile.xp % 100)}%`;
             } else { document.getElementById('user-name').textContent = currentUser.email.split('@')[0]; }
-
             setupChat(); loadDashboardData();
         }
 
         async function loadDashboardData() { 
-            renderMiniCalendar(); 
-            loadDownloads(); 
-            loadRanking(); 
-            loadGallery(); 
-            loadNews(); // Carrega as Notícias
+            renderMiniCalendar(); loadDownloads(); loadRanking(); loadGallery(); loadNews(); 
         }
 
-        function sanitizeFileName(name) {
-            return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_');
-        }
+        function sanitizeFileName(name) { return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_'); }
 
-        // --- NOTÍCIAS / MURAL ---
         async function loadNews() {
             const feed = document.getElementById('news-feed');
             const adminBtn = document.getElementById('admin-news-btn');
-            
-            // Botão Admin
             if(currentProfile && currentProfile.is_admin) {
                 adminBtn.innerHTML = `<button onclick="postNews()" class="text-xs bg-purple-600 hover:bg-purple-500 text-white px-3 py-1 rounded-full font-bold transition">NOVO AVISO</button>`;
             }
-
             const { data } = await client.from('news').select('*').order('created_at', { ascending: false }).limit(10);
             feed.innerHTML = '';
-            
-            if(!data || data.length === 0) {
-                feed.innerHTML = '<p class="text-slate-500 italic">Nenhum aviso no momento.</p>';
-            } else {
+            if(!data || data.length === 0) { feed.innerHTML = '<p class="text-slate-500 italic text-sm">Nenhum aviso no momento.</p>'; } 
+            else {
                 data.forEach(item => {
                     const date = new Date(item.created_at).toLocaleDateString('pt-BR');
-                    feed.innerHTML += `
-                        <div class="glass-panel p-3 rounded-lg border-l-4 border-purple-500">
-                            <div class="flex justify-between items-start">
-                                <h4 class="font-bold text-white">${item.title}</h4>
-                                <span class="text-[10px] text-slate-400 bg-slate-800 px-2 rounded">${date}</span>
-                            </div>
-                            <p class="text-sm text-slate-300 mt-1">${item.content || ''}</p>
-                        </div>
-                    `;
+                    feed.innerHTML += `<div class="glass-panel p-3 rounded-lg border-l-4 border-purple-500"><div class="flex justify-between items-start"><h4 class="font-bold text-white text-sm">${item.title}</h4><span class="text-[10px] text-slate-400 bg-slate-800 px-2 rounded">${date}</span></div><p class="text-xs text-slate-300 mt-1">${item.content || ''}</p></div>`;
                 });
             }
         }
 
-        // Função Global para postar notícia
         window.postNews = async function() {
-            const title = prompt("Título do Aviso:");
-            if(!title) return;
+            const title = prompt("Título do Aviso:"); if(!title) return;
             const content = prompt("Mensagem do Aviso:");
-            
-            try {
-                await client.from('news').insert({ title, content });
-                loadNews(); // Recarrega na hora
-            } catch(e) { alert("Erro ao postar: " + e.message); }
+            try { await client.from('news').insert({ title, content }); loadNews(); } catch(e) { alert("Erro: " + e.message); }
         }
 
         async function loadRanking() {
@@ -266,95 +255,52 @@
             const grid = document.getElementById('gallery-grid');
             const { data } = await client.from('gallery').select('*').order('created_at', { ascending: false });
             let html = '';
-            if (currentProfile && currentProfile.is_admin) {
-                html += `<label class="btn-upload glass-panel rounded-xl" for="file-upload" id="upload-label"><i class="fas fa-plus text-3xl mb-2"></i><span class="text-xs font-bold uppercase">Adicionar Foto</span><input type="file" id="file-upload" accept="image/*" class="hidden"></label>`;
-            }
-            if(data && data.length > 0) {
-                data.forEach(img => { html += `<div class="glass-panel rounded-xl overflow-hidden cursor-pointer group pop-in" onclick="window.open('${img.image_url}', '_blank')"><div class="h-40 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style="background-image: url('${img.image_url}')"></div></div>`; });
-            } else if (!currentProfile || !currentProfile.is_admin) {
-                html += `<div class="col-span-2 text-slate-500 text-sm flex items-center">Galeria vazia.</div>`;
-            }
+            if (currentProfile && currentProfile.is_admin) { html += `<label class="btn-upload glass-panel rounded-xl" for="file-upload" id="upload-label"><i class="fas fa-plus text-3xl mb-2"></i><span class="text-xs font-bold uppercase">Adicionar Foto</span><input type="file" id="file-upload" accept="image/*" class="hidden"></label>`; }
+            if(data && data.length > 0) { data.forEach(img => { html += `<div class="glass-panel rounded-xl overflow-hidden cursor-pointer group pop-in" onclick="window.open('${img.image_url}', '_blank')"><div class="h-40 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style="background-image: url('${img.image_url}')"></div></div>`; }); } 
+            else if (!currentProfile || !currentProfile.is_admin) { html += `<div class="col-span-2 text-slate-500 text-sm flex items-center">Galeria vazia.</div>`; }
             grid.innerHTML = html;
             const fileInput = document.getElementById('file-upload');
             if (fileInput) fileInput.addEventListener('change', handleUpload);
         }
 
         async function handleUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+            const file = e.target.files[0]; if (!file) return;
             const status = document.getElementById('upload-status');
             const label = document.getElementById('upload-label');
-            status.textContent = "Enviando..."; status.classList.remove('hidden');
-            label.classList.add('uploading');
+            status.textContent = "Enviando..."; status.classList.remove('hidden'); label.classList.add('uploading');
             try {
-                const cleanName = sanitizeFileName(file.name);
-                const fileName = `foto_${Date.now()}_${cleanName}`;
-                
-                const { data, error } = await client.storage.from('images').upload(fileName, file);
-                if (error) throw error;
+                const cleanName = sanitizeFileName(file.name); const fileName = `foto_${Date.now()}_${cleanName}`;
+                const { data, error } = await client.storage.from('images').upload(fileName, file); if (error) throw error;
                 const { data: { publicUrl } } = client.storage.from('images').getPublicUrl(fileName);
                 await client.from('gallery').insert({ title: 'Nova Foto', image_url: publicUrl });
-                await loadGallery();
-                setTimeout(() => { status.classList.add('hidden'); }, 2000);
+                await loadGallery(); setTimeout(() => { status.classList.add('hidden'); }, 2000);
             } catch (error) { alert("Erro: " + error.message); status.classList.add('hidden'); loadGallery(); }
         }
 
         async function loadDownloads() {
             const container = document.getElementById('downloads-container');
             const { data } = await client.from('downloads').select('*').order('created_at', { ascending: false });
-            
             let uploadHtml = '';
-            if (currentProfile && currentProfile.is_admin) {
-                uploadHtml = `
-                    <label class="btn-upload glass-panel rounded-lg mb-4" for="material-upload" id="material-label" style="min-height: 60px; border-style: dashed;">
-                        <i class="fas fa-plus text-xl mb-1"></i>
-                        <span class="text-[10px] font-bold uppercase">Adicionar Material</span>
-                        <input type="file" id="material-upload" class="hidden">
-                    </label>
-                `;
-            }
-
-            let itemsHtml = '';
-            if(!data || data.length === 0) { 
-                itemsHtml = '<p class="text-slate-500 text-xs">Sem arquivos.</p>'; 
-            } else {
-                data.forEach(item => { 
-                    itemsHtml += `<div class="list-item p-2 rounded flex items-center gap-3 cursor-pointer border-b border-white/5" onclick="window.open('${item.link}', '_blank')"><div class="w-8 h-8 rounded bg-red-500/20 flex items-center justify-center text-red-400 flex-shrink-0"><i class="fas fa-file-pdf"></i></div><div class="overflow-hidden"><p class="font-bold text-xs truncate text-white">${item.title}</p><p class="text-[10px] text-slate-400">${item.category || 'Arquivo'}</p></div></div>`; 
-                });
-            }
-
+            if (currentProfile && currentProfile.is_admin) { uploadHtml = `<label class="btn-upload glass-panel rounded-lg mb-4" for="material-upload" id="material-label" style="min-height: 60px; border-style: dashed;"><i class="fas fa-plus text-xl mb-1"></i><span class="text-[10px] font-bold uppercase">Adicionar Material</span><input type="file" id="material-upload" class="hidden"></label>`; }
+            let itemsHtml = (!data || data.length === 0) ? '<p class="text-slate-500 text-xs">Sem arquivos.</p>' : '';
+            if(data) data.forEach(item => { itemsHtml += `<div class="list-item p-2 rounded flex items-center gap-3 cursor-pointer border-b border-white/5" onclick="window.open('${item.link}', '_blank')"><div class="w-8 h-8 rounded bg-red-500/20 flex items-center justify-center text-red-400 flex-shrink-0"><i class="fas fa-file-pdf"></i></div><div class="overflow-hidden"><p class="font-bold text-xs truncate text-white">${item.title}</p><p class="text-[10px] text-slate-400">${item.category || 'Arquivo'}</p></div></div>`; });
             container.innerHTML = uploadHtml + '<div id="actual-list">' + itemsHtml + '</div>';
-
             const materialInput = document.getElementById('material-upload');
             if (materialInput) materialInput.addEventListener('change', handleMaterialUpload);
         }
 
         async function handleMaterialUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const title = prompt("Digite o nome do material:", file.name);
-            if (!title) return;
-
+            const file = e.target.files[0]; if (!file) return;
+            const title = prompt("Digite o nome do material:", file.name); if (!title) return;
             const status = document.getElementById('upload-material-status');
             const label = document.getElementById('material-label');
-            
-            status.textContent = "Enviando..."; status.classList.remove('hidden');
-            if(label) {
-                label.classList.add('uploading');
-                label.innerHTML = `<i class="fas fa-spinner fa-spin text-xl mb-1"></i><span class="text-[10px]">...</span>`;
-            }
-
+            status.textContent = "Enviando..."; status.classList.remove('hidden'); if(label) label.classList.add('uploading');
             try {
-                const cleanName = sanitizeFileName(file.name);
-                const fileName = `doc_${Date.now()}_${cleanName}`;
-                
-                const { data, error } = await client.storage.from('materials').upload(fileName, file);
-                if (error) throw error;
+                const cleanName = sanitizeFileName(file.name); const fileName = `doc_${Date.now()}_${cleanName}`;
+                const { data, error } = await client.storage.from('materials').upload(fileName, file); if (error) throw error;
                 const { data: { publicUrl } } = client.storage.from('materials').getPublicUrl(fileName);
                 await client.from('downloads').insert({ title: title, category: 'Material', link: publicUrl });
-                await loadDownloads();
-                setTimeout(() => { status.classList.add('hidden'); }, 2000);
+                await loadDownloads(); setTimeout(() => { status.classList.add('hidden'); }, 2000);
             } catch (error) { alert("Erro: " + error.message); status.classList.add('hidden'); loadDownloads(); }
         }
 
@@ -362,18 +308,32 @@
             const date = new Date(); const year = date.getFullYear(); const month = date.getMonth();
             const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
             document.getElementById('mini-month').textContent = `${months[month]}`.toUpperCase();
+            
             const startStr = new Date(year, month, 1).toISOString();
             const endStr = new Date(year, month + 1, 0).toISOString();
             let events = [];
             try { const { data } = await client.from('calendar').select('*').gte('event_date', startStr).lte('event_date', endStr); if(data) events = data; } catch(e){}
+
             const grid = document.getElementById('mini-calendar-grid');
             grid.innerHTML = '<div class="text-[10px] text-slate-500">D</div><div class="text-[10px] text-slate-500">S</div><div class="text-[10px] text-slate-500">T</div><div class="text-[10px] text-slate-500">Q</div><div class="text-[10px] text-slate-500">Q</div><div class="text-[10px] text-slate-500">S</div><div class="text-[10px] text-slate-500">S</div>';
+            
             const firstDay = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate(); const today = new Date().getDate();
+
             for(let i=0; i<firstDay; i++) grid.innerHTML += `<div></div>`;
             for(let d=1; d<=daysInMonth; d++) {
                 const dateStr = `${year}-${String(month+1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                const hasEvent = events.some(e => e.event_date === dateStr); const isToday = (d === today);
-                grid.innerHTML += `<div class="calendar-day ${isToday ? 'current-day' : ''} ${hasEvent ? 'has-event' : ''}">${d}</div>`;
+                const event = events.find(e => e.event_date === dateStr);
+                const isToday = (d === today);
+                
+                let evtClass = '';
+                if(event) {
+                    evtClass = 'has-event'; // Padrão
+                    if(event.type === 'prova') evtClass += ' evt-prova';
+                    else if(event.type === 'trabalho') evtClass += ' evt-trabalho';
+                    else evtClass += ' evt-festa';
+                }
+
+                grid.innerHTML += `<div class="calendar-day ${isToday ? 'current-day' : ''} ${evtClass}">${d}</div>`;
             }
         }
         
