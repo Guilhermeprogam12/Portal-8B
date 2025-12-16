@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    
     <style>
         body { font-family: 'Outfit', sans-serif; background-color: #030712; background-image: radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 40%); color: #f3f4f6; min-height: 100vh; overflow-x: hidden; }
         .font-display { font-family: 'Space Grotesk', sans-serif; }
@@ -27,13 +28,6 @@
         .fade-in-slow { animation: fadeIn 2s ease-in forwards; opacity: 0; animation-delay: 0.5s; }
         @keyframes fadeIn { to { opacity: 1; } }
         .xp-bar-fill { background: linear-gradient(90deg, #3b82f6, #8b5cf6); transition: width 1s ease-out; }
-        
-        /* GRÁFICO DE VOTAÇÃO */
-        .poll-bar-container { position: relative; width: 100%; height: 40px; background: rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
-        .poll-bar-fill { height: 100%; background: linear-gradient(90deg, #2563eb, #8b5cf6); transition: width 1s ease-out; opacity: 0.6; }
-        .poll-bar-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font-size: 0.8rem; font-weight: bold; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-        .poll-bar-fill.winner { background: linear-gradient(90deg, #059669, #34d399); opacity: 0.8; }
-
         .calendar-day { min-height: 40px; border-radius: 6px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; position: relative; }
         .current-day { border: 1px solid #8b5cf6; color: #a78bfa; font-weight: bold; background: rgba(139, 92, 246, 0.1); }
         .has-event::after { content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; border-radius: 50%; }
@@ -42,6 +36,10 @@
         .evt-simulado::after { background: #eab308; box-shadow: 0 0 5px #eab308; }
         .evt-gincana::after { background: #f97316; box-shadow: 0 0 5px #f97316; }
         .evt-interclasse::after { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
+        .poll-bar-container { position: relative; width: 100%; height: 40px; background: rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
+        .poll-bar-fill { height: 100%; background: linear-gradient(90deg, #2563eb, #8b5cf6); transition: width 1s ease-out; opacity: 0.6; }
+        .poll-bar-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font-size: 0.8rem; font-weight: bold; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        .poll-bar-fill.winner { background: linear-gradient(90deg, #059669, #34d399); opacity: 0.8; }
         .list-item { transition: all 0.2s; }
         .list-item:hover { background: rgba(255,255,255,0.05); padding-left: 1rem; }
         .hidden { display: none !important; }
@@ -207,15 +205,25 @@
                     const phone = document.getElementById('reg-phone').value;
                     if (!name) throw new Error("Por favor, digite seu nome.");
 
-                    const { data, error } = await client.auth.signUp({ email, password });
+                    // 1. Cria conta com METADADOS
+                    // O Robô (Trigger) no banco vai ler isso e criar o perfil sozinho
+                    const { data, error } = await client.auth.signUp({
+                        email,
+                        password,
+                        options: {
+                            data: {
+                                nickname: name,
+                                phone: phone,
+                                avatar_text: name.substring(0,2).toUpperCase()
+                            }
+                        }
+                    });
+                    
                     if (error) throw error;
 
-                    if (data.user) {
-                        const avatarLetters = name.substring(0,2).toUpperCase();
-                        await client.from('profiles').update({ nickname: name, phone: phone, avatar_text: avatarLetters }).eq('id', data.user.id);
-                    }
-                    if(data.session) { currentUser = data.user; await enterApp(); }
-                    else { alert("Conta criada! Faça login."); isRegistering = false; document.getElementById('btn-toggle-register').click(); }
+                    alert("Conta criada com sucesso! Verifique seu e-mail para confirmar antes de entrar.");
+                    window.location.reload(); 
+
                 } else {
                     const { data, error } = await client.auth.signInWithPassword({ email, password });
                     if (error) throw error;
@@ -241,10 +249,8 @@
 
         async function loadDashboardData() { renderMiniCalendar(); loadDownloads(); loadRanking(); loadGallery(); loadNews(); loadPoll(); }
 
-        // SISTEMA DE GANHO DE XP
-        async function gainXP(amount) {
-            try { await client.rpc('add_xp', { amount: amount }); } catch(e) { console.error("XP Error:", e); }
-        }
+        // GANHO DE XP
+        async function gainXP(amount) { try { await client.rpc('add_xp', { amount: amount }); } catch(e) {} }
 
         function sanitizeFileName(name) { return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_'); }
 
@@ -262,27 +268,16 @@
             const counts = new Array(poll.options.length).fill(0);
             votes.forEach(v => counts[v.option_index]++);
             const totalVotes = votes.length;
-            
-            // Acha o mais votado para pintar de verde
             const maxVotes = Math.max(...counts);
 
             let html = `<h4 class="text-sm font-bold text-white mb-3 text-center">${poll.question}</h4><div class="space-y-3">`;
             poll.options.forEach((opt, index) => {
                 const count = counts[index];
                 const percent = totalVotes === 0 ? 0 : Math.round((count / totalVotes) * 100);
-                
                 if (myVote) {
                     const isWinner = count === maxVotes && totalVotes > 0;
                     const isSelected = myVote.option_index === index;
-                    html += `
-                        <div class="poll-bar-container">
-                            <div class="poll-bar-fill ${isWinner ? 'winner' : ''}" style="width: ${percent}%"></div>
-                            <div class="poll-bar-text">
-                                <span>${opt} ${isSelected ? '<i class="fas fa-check-circle text-white ml-1"></i>' : ''}</span>
-                                <span>${percent}%</span>
-                            </div>
-                        </div>
-                    `;
+                    html += `<div class="poll-bar-container"><div class="poll-bar-fill ${isWinner ? 'winner' : ''}" style="width: ${percent}%"></div><div class="poll-bar-text"><span>${opt} ${isSelected ? '<i class="fas fa-check-circle text-white ml-1"></i>' : ''}</span><span>${percent}%</span></div></div>`;
                 } else {
                     html += `<button onclick="vote(${poll.id}, ${index})" class="w-full text-left bg-slate-800 hover:bg-slate-700 p-3 rounded-lg text-xs font-bold text-slate-300 border border-slate-700 hover:border-blue-500 transition shadow-md">${opt}</button>`;
                 }
@@ -299,12 +294,7 @@
         }
 
         window.vote = async function(pollId, optionIndex) {
-            try { 
-                await client.from('poll_votes').insert({ poll_id: pollId, option_index: optionIndex, user_id: currentUser.id }); 
-                // GANHA XP POR VOTAR
-                await gainXP(10);
-                loadPoll(); 
-            } catch(e) { alert("Você já votou nesta enquete!"); loadPoll(); }
+            try { await client.from('poll_votes').insert({ poll_id: pollId, option_index: optionIndex, user_id: currentUser.id }); await gainXP(10); loadPoll(); } catch(e) { alert("Você já votou nesta enquete!"); loadPoll(); }
         }
 
         async function loadNews() {
@@ -369,7 +359,6 @@
                 const { data, error } = await client.storage.from('images').upload(fileName, file); if (error) throw error;
                 const { data: { publicUrl } } = client.storage.from('images').getPublicUrl(fileName);
                 await client.from('gallery').insert({ title: 'Nova Foto', image_url: publicUrl });
-                // GANHA XP NA FOTO
                 await gainXP(20);
                 await loadGallery(); setTimeout(() => { status.classList.add('hidden'); }, 2000);
             } catch (error) { alert("Erro: " + error.message); status.classList.add('hidden'); loadGallery(); }
@@ -454,7 +443,6 @@
         }
         document.getElementById('chat-form').onsubmit = async (e) => { e.preventDefault(); const i = document.getElementById('chat-msg'); if(!i.value.trim())return; 
             await client.from('messages').insert({content:i.value, user_id:currentUser.id, email:currentUser.email}); 
-            // GANHA XP NO CHAT
             await gainXP(5);
             i.value=''; 
         };
@@ -466,10 +454,9 @@
         }
         document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = () => goToSection(btn.dataset.target));
         
-        // LOGOUT
         const doLogout = async () => { await client.auth.signOut(); location.reload(); };
         document.getElementById('btn-logout-sidebar').onclick = doLogout;
-        document.getElementById('btn-logout-mobile').onclick = doLogout;
+        document.getElementById('mobile-logout-top').onclick = doLogout;
 
         client.auth.getSession().then(({ data: { session } }) => { if (session) { currentUser = session.user; enterApp(); } });
     </script>
