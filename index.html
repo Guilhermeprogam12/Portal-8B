@@ -74,8 +74,7 @@
                 <button class="nav-btn active text-purple-400 text-xl hover:text-white transition" data-target="dashboard"><i class="fas fa-th-large"></i></button>
                 <button class="nav-btn text-slate-500 text-xl hover:text-white transition" data-target="chat"><i class="fas fa-comments"></i></button>
                 <button class="nav-btn text-slate-500 text-xl hover:text-white transition" data-target="gallery"><i class="fas fa-images"></i></button>
-                
-                <button id="btn-logout-nav" class="text-red-500 hover:text-red-400 text-xl transition"><i class="fas fa-power-off"></i></button>
+                <button id="btn-logout-sidebar" class="text-red-500 hover:text-red-400 text-xl transition"><i class="fas fa-power-off"></i></button>
             </div>
             <div class="hidden md:block h-6"></div>
         </nav>
@@ -84,7 +83,7 @@
             <header class="flex justify-between items-center mb-6 glass-panel p-4 rounded-xl">
                 <div><h2 class="text-lg md:text-xl font-display font-bold">Olá, <span id="user-name" class="text-purple-400">Aluno</span></h2></div>
                 <div class="flex items-center gap-4">
-                    <button id="mobile-logout-top" class="md:hidden text-red-500 text-xs font-bold border border-red-500/30 px-2 py-1 rounded">SAIR</button>
+                    <button id="btn-logout-mobile" class="md:hidden text-red-500 text-xs font-bold border border-red-500/30 px-2 py-1 rounded">SAIR</button>
                     <div class="text-right text-xs"><p class="font-bold text-blue-400">NÍVEL <span id="lvl-display">1</span></p><p class="text-slate-400"><span id="xp-display">0</span> XP</p></div>
                     <div class="w-24 h-2 bg-slate-700 rounded-full overflow-hidden"><div id="xp-bar" class="xp-bar-fill h-full w-0"></div></div>
                 </div>
@@ -92,7 +91,6 @@
 
             <section id="section-dashboard" class="page-section space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    
                     <div class="md:col-span-2 glass-panel p-6 rounded-2xl relative overflow-hidden group flex flex-col">
                         <div class="absolute -right-20 -top-20 w-60 h-60 bg-purple-600 rounded-full blur-[80px] opacity-20"></div>
                         <div class="flex justify-between items-center mb-4 z-10">
@@ -125,18 +123,17 @@
                         </div>
                     </div>
 
-                    <div class="glass-panel p-4 rounded-2xl text-center">
-                        <h3 class="font-bold text-red-400 mb-2 text-sm"><i class="fas fa-stopwatch mr-2"></i>Modo Foco</h3>
-                        <div class="text-3xl font-display font-bold mb-2" id="pomodoro-timer">25:00</div>
-                        <button id="btn-pomodoro" class="bg-red-500/20 text-red-400 border border-red-500/50 px-4 py-1 rounded-full text-[10px] font-bold hover:bg-red-500 hover:text-white transition">INICIAR</button>
-                    </div>
-
                     <div class="glass-panel p-4 rounded-2xl md:col-span-2">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-pink-400"><i class="fas fa-download mr-2"></i>Materiais</h3>
                             <p id="upload-material-status" class="text-xs text-green-400 hidden animate-pulse">Enviando...</p>
                         </div>
                         <div id="downloads-container" class="space-y-2 max-h-40 overflow-y-auto custom-scroll"><div id="downloads-list" class="space-y-2"></div></div>
+                    </div>
+                    
+                    <div class="glass-panel p-4 rounded-2xl flex flex-col">
+                        <h3 class="font-bold text-yellow-400 mb-4"><i class="fas fa-crown mr-2"></i>Ranking XP</h3>
+                        <div id="ranking-list" class="space-y-3 flex-1 overflow-y-auto custom-scroll"><p class="text-slate-500 text-sm">Carregando...</p></div>
                     </div>
                 </div>
             </section>
@@ -239,83 +236,45 @@
 
         function sanitizeFileName(name) { return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_'); }
 
-        // --- ENQUETES ---
         async function loadPoll() {
             const container = document.getElementById('poll-container');
             const adminBtn = document.getElementById('admin-poll-btn');
-            
-            // Botão Admin
             if(currentProfile && currentProfile.is_admin) {
                 adminBtn.innerHTML = `<button onclick="createPoll()" class="text-[10px] bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded font-bold transition"><i class="fas fa-plus"></i></button>`;
             }
-
-            // Pega enquete mais recente
             const { data: polls } = await client.from('polls').select('*').order('created_at', { ascending: false }).limit(1);
-            
-            if(!polls || polls.length === 0) {
-                container.innerHTML = '<p class="text-slate-500 text-xs">Nenhuma votação ativa.</p>';
-                return;
-            }
-
+            if(!polls || polls.length === 0) { container.innerHTML = '<p class="text-slate-500 text-xs">Nenhuma votação ativa.</p>'; return; }
             const poll = polls[0];
-            
-            // Pega todos os votos dessa enquete
             const { data: votes } = await client.from('poll_votes').select('*').eq('poll_id', poll.id);
-            
-            // Verifica se eu já votei
             const myVote = votes.find(v => v.user_id === currentUser.id);
-            
-            // Contagem
             const counts = new Array(poll.options.length).fill(0);
             votes.forEach(v => counts[v.option_index]++);
             const totalVotes = votes.length;
-
             let html = `<h4 class="text-sm font-bold text-white mb-2">${poll.question}</h4><div class="space-y-2">`;
-
             poll.options.forEach((opt, index) => {
                 const percent = totalVotes === 0 ? 0 : Math.round((counts[index] / totalVotes) * 100);
-                
                 if (myVote) {
-                    // MODO RESULTADO (Já votou)
                     const isSelected = myVote.option_index === index;
-                    html += `
-                        <div class="relative w-full h-8 bg-slate-800 rounded overflow-hidden">
-                            <div class="absolute top-0 left-0 h-full ${isSelected ? 'bg-blue-600' : 'bg-slate-600'} opacity-50" style="width: ${percent}%"></div>
-                            <div class="absolute top-0 left-0 w-full h-full flex items-center justify-between px-3 text-xs">
-                                <span class="font-bold ${isSelected ? 'text-blue-300' : 'text-slate-300'}">${opt}</span>
-                                <span class="text-slate-400">${percent}%</span>
-                            </div>
-                        </div>
-                    `;
+                    html += `<div class="relative w-full h-8 bg-slate-800 rounded overflow-hidden"><div class="absolute top-0 left-0 h-full ${isSelected ? 'bg-blue-600' : 'bg-slate-600'} opacity-50" style="width: ${percent}%"></div><div class="absolute top-0 left-0 w-full h-full flex items-center justify-between px-3 text-xs"><span class="font-bold ${isSelected ? 'text-blue-300' : 'text-slate-300'}">${opt}</span><span class="text-slate-400">${percent}%</span></div></div>`;
                 } else {
-                    // MODO VOTAÇÃO
                     html += `<button onclick="vote(${poll.id}, ${index})" class="w-full text-left bg-slate-800 hover:bg-slate-700 p-2 rounded text-xs font-bold text-slate-300 border border-slate-700 hover:border-blue-500 transition">${opt}</button>`;
                 }
             });
-
             html += `</div><p class="text-[10px] text-slate-500 mt-2 text-right">${totalVotes} votos</p>`;
             container.innerHTML = html;
         }
 
         window.createPoll = async function() {
             const question = prompt("Pergunta da Enquete:"); if(!question) return;
-            const optionsStr = prompt("Opções separadas por vírgula (Ex: Churrasco, Pizza, Hambúrguer):"); if(!optionsStr) return;
+            const optionsStr = prompt("Opções separadas por vírgula:"); if(!optionsStr) return;
             const options = optionsStr.split(',').map(s => s.trim()).filter(s => s);
-            
-            try {
-                await client.from('polls').insert({ question, options });
-                loadPoll();
-            } catch(e) { alert("Erro: " + e.message); }
+            try { await client.from('polls').insert({ question, options }); loadPoll(); } catch(e) { alert("Erro: " + e.message); }
         }
 
         window.vote = async function(pollId, optionIndex) {
-            try {
-                await client.from('poll_votes').insert({ poll_id: pollId, option_index: optionIndex });
-                loadPoll();
-            } catch(e) { alert("Você já votou!"); }
+            try { await client.from('poll_votes').insert({ poll_id: pollId, option_index: optionIndex }); loadPoll(); } catch(e) { alert("Você já votou!"); }
         }
 
-        // --- NOTÍCIAS ---
         async function loadNews() {
             const feed = document.getElementById('news-feed');
             const adminBtn = document.getElementById('admin-news-btn');
@@ -468,32 +427,10 @@
         }
         document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = () => goToSection(btn.dataset.target));
         
+        // LOGOUT
         const doLogout = async () => { await client.auth.signOut(); location.reload(); };
-        document.getElementById('btn-logout').onclick = doLogout;
-        document.getElementById('btn-logout-nav').onclick = doLogout;
-        document.getElementById('mobile-logout-top').onclick = doLogout;
-
-        // POMODORO
-        let pomodoroInterval;
-        let isPomodoroRunning = false;
-        let timeLeft = 25 * 60;
-        document.getElementById('btn-pomodoro').onclick = () => {
-            const display = document.getElementById('pomodoro-timer');
-            const btn = document.getElementById('btn-pomodoro');
-            if (!isPomodoroRunning) {
-                isPomodoroRunning = true;
-                btn.textContent = "PARAR";
-                btn.classList.replace('bg-red-500/20', 'bg-red-500'); btn.classList.replace('text-red-400', 'text-white');
-                pomodoroInterval = setInterval(() => {
-                    timeLeft--;
-                    const m = Math.floor(timeLeft / 60); const s = timeLeft % 60;
-                    display.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
-                    if (timeLeft <= 0) { clearInterval(pomodoroInterval); alert("Tempo esgotado!"); timeLeft = 25 * 60; isPomodoroRunning = false; btn.textContent = "INICIAR"; display.textContent = "25:00"; btn.classList.replace('bg-red-500', 'bg-red-500/20'); btn.classList.replace('text-white', 'text-red-400'); }
-                }, 1000);
-            } else {
-                clearInterval(pomodoroInterval); isPomodoroRunning = false; btn.textContent = "INICIAR"; btn.classList.replace('bg-red-500', 'bg-red-500/20'); btn.classList.replace('text-white', 'text-red-400');
-            }
-        };
+        document.getElementById('btn-logout-sidebar').onclick = doLogout;
+        document.getElementById('btn-logout-mobile').onclick = doLogout;
 
         client.auth.getSession().then(({ data: { session } }) => { if (session) { currentUser = session.user; enterApp(); } });
     </script>
