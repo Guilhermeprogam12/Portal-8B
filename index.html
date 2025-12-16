@@ -54,15 +54,12 @@
                 <p class="text-blue-400 font-bold tracking-widest text-xs uppercase fade-in-slow">Sistema Oficial</p>
             </div>
             <form id="login-form" class="space-y-4 fade-in-slow">
-                
                 <div id="register-fields" class="hidden space-y-4">
                     <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Nome / Apelido</label><input type="text" id="reg-name" class="input-glass w-full px-4 py-3 rounded-xl mt-1" placeholder="Ex: Guilherme"></div>
                     <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Telefone</label><input type="tel" id="reg-phone" class="input-glass w-full px-4 py-3 rounded-xl mt-1" placeholder="(XX) 9XXXX-XXXX"></div>
                 </div>
-
                 <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">E-mail</label><input type="email" id="email" class="input-glass w-full px-4 py-3 rounded-xl mt-1" required></div>
                 <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Senha</label><input type="password" id="password" class="input-glass w-full px-4 py-3 rounded-xl mt-1" required></div>
-                
                 <button type="submit" id="btn-login" class="btn-vivid w-full py-4 rounded-xl shadow-lg mt-4 cursor-pointer">ACESSAR SISTEMA</button>
             </form>
             <div class="mt-6 text-center fade-in-slow"><button id="btn-toggle-register" class="text-slate-500 text-sm hover:text-white transition-colors">Não tem conta? <span class="text-purple-400">Criar cadastro</span></button></div>
@@ -71,25 +68,23 @@
     </div>
 
     <div id="app-screen" class="min-h-screen hidden flex flex-col md:flex-row">
-        <nav class="glass-panel w-full md:w-24 md:h-screen fixed bottom-0 md:left-0 z-40 flex md:flex-col justify-between items-center p-4 border-r border-white/5">
+        <nav class="glass-panel w-full md:w-20 md:h-screen fixed bottom-0 md:left-0 z-40 flex md:flex-col justify-between items-center p-4 border-r border-white/5">
             <div class="hidden md:block font-bold text-purple-500 text-xl">8B</div>
-            <div class="flex md:flex-col gap-8 w-full justify-around md:justify-center">
+            <div class="flex md:flex-col gap-6 w-full justify-around md:justify-center items-center">
                 <button class="nav-btn active text-purple-400 text-xl hover:text-white transition" data-target="dashboard"><i class="fas fa-th-large"></i></button>
                 <button class="nav-btn text-slate-500 text-xl hover:text-white transition" data-target="chat"><i class="fas fa-comments"></i></button>
                 <button class="nav-btn text-slate-500 text-xl hover:text-white transition" data-target="gallery"><i class="fas fa-images"></i></button>
+                
+                <button id="btn-logout-nav" class="text-red-500 hover:text-red-400 text-xl transition"><i class="fas fa-power-off"></i></button>
             </div>
-            
-            <button id="btn-logout" class="hidden md:flex flex-col items-center gap-1 text-red-500 hover:text-red-400 transition">
-                <i class="fas fa-power-off text-lg"></i>
-                <span class="text-[9px] font-bold uppercase">Sair</span>
-            </button>
+            <div class="hidden md:block h-6"></div>
         </nav>
 
-        <main class="flex-1 md:ml-24 p-4 md:p-6 max-w-7xl mx-auto w-full pb-8 md:pb-6">
+        <main class="flex-1 md:ml-20 p-4 md:p-6 max-w-7xl mx-auto w-full pb-20 md:pb-6">
             <header class="flex justify-between items-center mb-6 glass-panel p-4 rounded-xl">
                 <div><h2 class="text-lg md:text-xl font-display font-bold">Olá, <span id="user-name" class="text-purple-400">Aluno</span></h2></div>
                 <div class="flex items-center gap-4">
-                    <button id="mobile-logout" class="md:hidden text-red-500 text-sm font-bold border border-red-500/30 px-3 py-1 rounded-full">SAIR</button>
+                    <button id="mobile-logout-top" class="md:hidden text-red-500 text-xs font-bold border border-red-500/30 px-2 py-1 rounded">SAIR</button>
                     <div class="text-right text-xs"><p class="font-bold text-blue-400">NÍVEL <span id="lvl-display">1</span></p><p class="text-slate-400"><span id="xp-display">0</span> XP</p></div>
                     <div class="w-24 h-2 bg-slate-700 rounded-full overflow-hidden"><div id="xp-bar" class="xp-bar-fill h-full w-0"></div></div>
                 </div>
@@ -97,18 +92,27 @@
 
             <section id="section-dashboard" class="page-section space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
                     <div class="md:col-span-2 glass-panel p-6 rounded-2xl relative overflow-hidden group flex flex-col">
                         <div class="absolute -right-20 -top-20 w-60 h-60 bg-purple-600 rounded-full blur-[80px] opacity-20"></div>
                         <div class="flex justify-between items-center mb-4 z-10">
                             <h3 class="text-2xl font-display font-bold">Mural 8ºB</h3>
                             <div id="admin-news-btn"></div>
                         </div>
-                        <div id="news-feed" class="space-y-4 overflow-y-auto max-h-60 z-10 custom-scroll"><p class="text-slate-400">Carregando avisos...</p></div>
+                        <div id="news-feed" class="space-y-4 overflow-y-auto max-h-40 z-10 custom-scroll"><p class="text-slate-400">Carregando avisos...</p></div>
                     </div>
-                    <div class="glass-panel p-4 rounded-2xl row-span-2 flex flex-col">
-                        <h3 class="font-bold text-yellow-400 mb-4"><i class="fas fa-crown mr-2"></i>Ranking XP</h3>
-                        <div id="ranking-list" class="space-y-3 flex-1 overflow-y-auto custom-scroll"><p class="text-slate-500 text-sm">Carregando...</p></div>
+
+                    <div class="glass-panel p-4 rounded-2xl row-span-2 flex flex-col relative overflow-hidden">
+                        <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-blue-600 rounded-full blur-[60px] opacity-20"></div>
+                        <div class="flex justify-between items-center mb-4 z-10">
+                            <h3 class="font-bold text-blue-400"><i class="fas fa-poll mr-2"></i>Votação</h3>
+                            <div id="admin-poll-btn"></div>
+                        </div>
+                        <div id="poll-container" class="flex-1 flex flex-col justify-center z-10 space-y-3">
+                            <p class="text-slate-500 text-xs">Nenhuma enquete ativa.</p>
+                        </div>
                     </div>
+
                     <div class="glass-panel p-4 rounded-2xl">
                         <div class="flex justify-between items-center mb-2"><h3 class="font-bold text-blue-400"><i class="fas fa-calendar-alt mr-2"></i>Agenda</h3><span id="mini-month" class="text-xs font-bold uppercase">MÊS</span></div>
                         <div id="mini-calendar-grid" class="grid grid-cols-7 gap-1 text-center mb-3"></div>
@@ -120,12 +124,19 @@
                             <div class="flex items-center gap-1 col-span-2"><span class="w-2 h-2 rounded-full bg-22c55e shadow-[0_0_5px_#22c55e]" style="background:#22c55e"></span> Interclasse</div>
                         </div>
                     </div>
-                    <div class="glass-panel p-4 rounded-2xl">
+
+                    <div class="glass-panel p-4 rounded-2xl text-center">
+                        <h3 class="font-bold text-red-400 mb-2 text-sm"><i class="fas fa-stopwatch mr-2"></i>Modo Foco</h3>
+                        <div class="text-3xl font-display font-bold mb-2" id="pomodoro-timer">25:00</div>
+                        <button id="btn-pomodoro" class="bg-red-500/20 text-red-400 border border-red-500/50 px-4 py-1 rounded-full text-[10px] font-bold hover:bg-red-500 hover:text-white transition">INICIAR</button>
+                    </div>
+
+                    <div class="glass-panel p-4 rounded-2xl md:col-span-2">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-pink-400"><i class="fas fa-download mr-2"></i>Materiais</h3>
                             <p id="upload-material-status" class="text-xs text-green-400 hidden animate-pulse">Enviando...</p>
                         </div>
-                        <div id="downloads-container" class="space-y-2 max-h-60 overflow-y-auto custom-scroll"><div id="downloads-list" class="space-y-2"></div></div>
+                        <div id="downloads-container" class="space-y-2 max-h-40 overflow-y-auto custom-scroll"><div id="downloads-list" class="space-y-2"></div></div>
                     </div>
                 </div>
             </section>
@@ -176,13 +187,7 @@
             document.querySelector('h1').textContent = isRegistering ? "CADASTRO" : "PORTAL 8ºB";
             document.getElementById('btn-login').textContent = isRegistering ? "CRIAR CONTA" : "ACESSAR SISTEMA";
             document.getElementById('btn-toggle-register').innerHTML = isRegistering ? 'Voltar para <span class="text-purple-400">Login</span>' : 'Não tem conta? <span class="text-purple-400">Criar cadastro</span>';
-            
-            // MOSTRA/ESCONDE CAMPOS EXTRAS
-            if (isRegistering) {
-                registerFields.classList.remove('hidden');
-            } else {
-                registerFields.classList.add('hidden');
-            }
+            if (isRegistering) registerFields.classList.remove('hidden'); else registerFields.classList.add('hidden');
         });
 
         loginForm.addEventListener('submit', async (e) => {
@@ -196,28 +201,18 @@
                 if (isRegistering) {
                     const name = document.getElementById('reg-name').value;
                     const phone = document.getElementById('reg-phone').value;
-
                     if (!name) throw new Error("Por favor, digite seu nome.");
 
-                    // 1. Cria Conta
                     const { data, error } = await client.auth.signUp({ email, password });
                     if (error) throw error;
 
-                    // 2. Salva Nome e Telefone no Perfil
                     if (data.user) {
                         const avatarLetters = name.substring(0,2).toUpperCase();
-                        await client.from('profiles').update({ 
-                            nickname: name,
-                            phone: phone,
-                            avatar_text: avatarLetters
-                        }).eq('id', data.user.id);
+                        await client.from('profiles').update({ nickname: name, phone: phone, avatar_text: avatarLetters }).eq('id', data.user.id);
                     }
-
                     if(data.session) { currentUser = data.user; await enterApp(); }
-                    else { alert("Conta criada! Se o login não for automático, faça login."); isRegistering = false; document.getElementById('btn-toggle-register').click(); }
-
+                    else { alert("Conta criada! Faça login."); isRegistering = false; document.getElementById('btn-toggle-register').click(); }
                 } else {
-                    // Login Normal
                     const { data, error } = await client.auth.signInWithPassword({ email, password });
                     if (error) throw error;
                     currentUser = data.user;
@@ -232,7 +227,6 @@
             const { data: profile } = await client.from('profiles').select('*').eq('id', currentUser.id).single();
             if(profile) {
                 currentProfile = profile; 
-                // USA O NOME ESCOLHIDO (ou o email se não tiver nome)
                 document.getElementById('user-name').textContent = profile.nickname || profile.email.split('@')[0];
                 document.getElementById('xp-display').textContent = profile.xp;
                 document.getElementById('lvl-display').textContent = profile.level;
@@ -241,21 +235,96 @@
             setupChat(); loadDashboardData();
         }
 
-        async function loadDashboardData() { 
-            renderMiniCalendar(); loadDownloads(); loadRanking(); loadGallery(); loadNews(); 
-        }
+        async function loadDashboardData() { renderMiniCalendar(); loadDownloads(); loadRanking(); loadGallery(); loadNews(); loadPoll(); }
 
         function sanitizeFileName(name) { return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_'); }
 
+        // --- ENQUETES ---
+        async function loadPoll() {
+            const container = document.getElementById('poll-container');
+            const adminBtn = document.getElementById('admin-poll-btn');
+            
+            // Botão Admin
+            if(currentProfile && currentProfile.is_admin) {
+                adminBtn.innerHTML = `<button onclick="createPoll()" class="text-[10px] bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded font-bold transition"><i class="fas fa-plus"></i></button>`;
+            }
+
+            // Pega enquete mais recente
+            const { data: polls } = await client.from('polls').select('*').order('created_at', { ascending: false }).limit(1);
+            
+            if(!polls || polls.length === 0) {
+                container.innerHTML = '<p class="text-slate-500 text-xs">Nenhuma votação ativa.</p>';
+                return;
+            }
+
+            const poll = polls[0];
+            
+            // Pega todos os votos dessa enquete
+            const { data: votes } = await client.from('poll_votes').select('*').eq('poll_id', poll.id);
+            
+            // Verifica se eu já votei
+            const myVote = votes.find(v => v.user_id === currentUser.id);
+            
+            // Contagem
+            const counts = new Array(poll.options.length).fill(0);
+            votes.forEach(v => counts[v.option_index]++);
+            const totalVotes = votes.length;
+
+            let html = `<h4 class="text-sm font-bold text-white mb-2">${poll.question}</h4><div class="space-y-2">`;
+
+            poll.options.forEach((opt, index) => {
+                const percent = totalVotes === 0 ? 0 : Math.round((counts[index] / totalVotes) * 100);
+                
+                if (myVote) {
+                    // MODO RESULTADO (Já votou)
+                    const isSelected = myVote.option_index === index;
+                    html += `
+                        <div class="relative w-full h-8 bg-slate-800 rounded overflow-hidden">
+                            <div class="absolute top-0 left-0 h-full ${isSelected ? 'bg-blue-600' : 'bg-slate-600'} opacity-50" style="width: ${percent}%"></div>
+                            <div class="absolute top-0 left-0 w-full h-full flex items-center justify-between px-3 text-xs">
+                                <span class="font-bold ${isSelected ? 'text-blue-300' : 'text-slate-300'}">${opt}</span>
+                                <span class="text-slate-400">${percent}%</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // MODO VOTAÇÃO
+                    html += `<button onclick="vote(${poll.id}, ${index})" class="w-full text-left bg-slate-800 hover:bg-slate-700 p-2 rounded text-xs font-bold text-slate-300 border border-slate-700 hover:border-blue-500 transition">${opt}</button>`;
+                }
+            });
+
+            html += `</div><p class="text-[10px] text-slate-500 mt-2 text-right">${totalVotes} votos</p>`;
+            container.innerHTML = html;
+        }
+
+        window.createPoll = async function() {
+            const question = prompt("Pergunta da Enquete:"); if(!question) return;
+            const optionsStr = prompt("Opções separadas por vírgula (Ex: Churrasco, Pizza, Hambúrguer):"); if(!optionsStr) return;
+            const options = optionsStr.split(',').map(s => s.trim()).filter(s => s);
+            
+            try {
+                await client.from('polls').insert({ question, options });
+                loadPoll();
+            } catch(e) { alert("Erro: " + e.message); }
+        }
+
+        window.vote = async function(pollId, optionIndex) {
+            try {
+                await client.from('poll_votes').insert({ poll_id: pollId, option_index: optionIndex });
+                loadPoll();
+            } catch(e) { alert("Você já votou!"); }
+        }
+
+        // --- NOTÍCIAS ---
         async function loadNews() {
             const feed = document.getElementById('news-feed');
             const adminBtn = document.getElementById('admin-news-btn');
             if(currentProfile && currentProfile.is_admin) {
-                adminBtn.innerHTML = `<button onclick="postNews()" class="text-xs bg-purple-600 hover:bg-purple-500 text-white px-3 py-1 rounded-full font-bold transition">NOVO AVISO</button>`;
+                adminBtn.innerHTML = `<button onclick="postNews()" class="text-[10px] bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 rounded font-bold transition"><i class="fas fa-plus"></i></button>`;
             }
             const { data } = await client.from('news').select('*').order('created_at', { ascending: false }).limit(10);
             feed.innerHTML = '';
-            if(!data || data.length === 0) { feed.innerHTML = '<p class="text-slate-500 italic text-sm">Nenhum aviso no momento.</p>'; } 
+            if(!data || data.length === 0) { feed.innerHTML = '<p class="text-slate-500 italic text-sm">Nenhum aviso.</p>'; } 
             else {
                 data.forEach(item => {
                     const date = new Date(item.created_at).toLocaleDateString('pt-BR');
@@ -280,7 +349,6 @@
                     if (user.email.includes('guilhermefontelas09')) return; 
                     if (position > 10) return;
                     let color = position === 1 ? 'text-yellow-400' : (position === 2 ? 'text-gray-300' : (position === 3 ? 'text-amber-600' : 'text-slate-400'));
-                    // USA O NICKNAME NO RANKING
                     const displayName = user.nickname || user.email.split('@')[0];
                     list.innerHTML += `<div class="flex items-center gap-3 border-b border-white/5 pb-2"><span class="font-bold ${color} text-sm w-4">#${position}</span><div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-white">${user.avatar_text}</div><span class="text-xs text-white flex-1 truncate">${displayName}</span><span class="text-xs font-bold text-purple-400">${user.xp} XP</span></div>`;
                     position++;
@@ -387,7 +455,6 @@
         }
         function addMsg(msg) {
             const isMe = msg.user_id === currentUser.id;
-            // Se for eu, usa 'Eu', se não, tenta usar o nickname (precisaria de join, aqui usa email simplificado pra não complicar query)
             const senderName = isMe ? 'Eu' : msg.email.split('@')[0];
             chatBox.innerHTML += `<div class="flex flex-col ${isMe?'items-end':'items-start'} mb-2"><div class="${isMe?'bg-purple-600':'bg-slate-700'} px-4 py-2 rounded-xl max-w-[80%] text-sm"><span class="text-[10px] opacity-50 block mb-1 font-bold">${senderName}</span>${msg.content}</div></div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
@@ -401,10 +468,32 @@
         }
         document.querySelectorAll('.nav-btn').forEach(btn => btn.onclick = () => goToSection(btn.dataset.target));
         
-        // LOGOUT
         const doLogout = async () => { await client.auth.signOut(); location.reload(); };
         document.getElementById('btn-logout').onclick = doLogout;
-        document.getElementById('mobile-logout').onclick = doLogout;
+        document.getElementById('btn-logout-nav').onclick = doLogout;
+        document.getElementById('mobile-logout-top').onclick = doLogout;
+
+        // POMODORO
+        let pomodoroInterval;
+        let isPomodoroRunning = false;
+        let timeLeft = 25 * 60;
+        document.getElementById('btn-pomodoro').onclick = () => {
+            const display = document.getElementById('pomodoro-timer');
+            const btn = document.getElementById('btn-pomodoro');
+            if (!isPomodoroRunning) {
+                isPomodoroRunning = true;
+                btn.textContent = "PARAR";
+                btn.classList.replace('bg-red-500/20', 'bg-red-500'); btn.classList.replace('text-red-400', 'text-white');
+                pomodoroInterval = setInterval(() => {
+                    timeLeft--;
+                    const m = Math.floor(timeLeft / 60); const s = timeLeft % 60;
+                    display.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+                    if (timeLeft <= 0) { clearInterval(pomodoroInterval); alert("Tempo esgotado!"); timeLeft = 25 * 60; isPomodoroRunning = false; btn.textContent = "INICIAR"; display.textContent = "25:00"; btn.classList.replace('bg-red-500', 'bg-red-500/20'); btn.classList.replace('text-white', 'text-red-400'); }
+                }, 1000);
+            } else {
+                clearInterval(pomodoroInterval); isPomodoroRunning = false; btn.textContent = "INICIAR"; btn.classList.replace('bg-red-500', 'bg-red-500/20'); btn.classList.replace('text-white', 'text-red-400');
+            }
+        };
 
         client.auth.getSession().then(({ data: { session } }) => { if (session) { currentUser = session.user; enterApp(); } });
     </script>
