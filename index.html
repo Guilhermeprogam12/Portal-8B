@@ -25,7 +25,7 @@
     </script>
 
     <style>
-        /* --- DEFINIÇÃO DOS TEMAS --- */
+
         :root {
             --primary: #ff0000; --primary-dim: #990000; --primary-glow: rgba(255, 0, 0, 0.5);
             --bg-grad: radial-gradient(circle at 10% 20%, rgba(255, 0, 0, 0.15) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(200, 0, 0, 0.10) 0%, transparent 40%);
@@ -34,7 +34,6 @@
         [data-theme="green"] { --primary: #00ff41; --primary-dim: #006400; --primary-glow: rgba(0, 255, 65, 0.5); --bg-grad: radial-gradient(circle at 50% 50%, rgba(0, 255, 65, 0.05) 0%, transparent 60%), repeating-linear-gradient(0deg, transparent, transparent 2px, #003300 3px); }
         [data-theme="dark"] { --primary: #d1d5db; --primary-dim: #4b5563; --primary-glow: rgba(255, 255, 255, 0.1); --bg-grad: none; }
 
-        /* --- ESTILOS GERAIS --- */
         body { background-color: #050505; background-image: var(--bg-grad); color: #f3f4f6; min-height: 100vh; overflow-x: hidden; transition: background-image 0.5s ease; }
         .glass-panel { background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); transition: all 0.3s ease; }
         .glass-panel:hover { border-color: var(--primary); box-shadow: 0 0 20px var(--primary-glow); }
@@ -86,6 +85,9 @@
         .badge-dot.active { display: block; animation: pulse 2s infinite; }
         .notification-item { border-left: 3px solid transparent; transition: all 0.2s; }
         .notification-item.unread { border-left-color: var(--primary); background: rgba(255,255,255,0.03); }
+        
+        /* Checkbox Customizado */
+        input[type="checkbox"] { accent-color: var(--primary); }
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -108,15 +110,25 @@
                 <h1 class="font-display text-5xl font-bold mb-2 tracking-tighter text-white slide-in-top" style="text-shadow: 0 0 30px var(--primary-glow);">PORTAL 8-B</h1>
                 <p class="text-theme-dynamic font-bold tracking-widest text-xs uppercase fade-in-slow">Sistema Oficial</p>
             </div>
+            
             <form id="login-form" class="space-y-4 fade-in-slow">
                 <div id="register-fields" class="hidden space-y-4">
                     <div><label class="text-xs font-bold text-gray-400 uppercase ml-1">Nome / Apelido</label><input type="text" id="reg-name" class="input-glass w-full px-4 py-3 rounded-xl mt-1" placeholder="Ex: Guilherme"></div>
                     <div><label class="text-xs font-bold text-gray-400 uppercase ml-1">Telefone</label><input type="tel" id="reg-phone" class="input-glass w-full px-4 py-3 rounded-xl mt-1" placeholder="(XX) 9XXXX-XXXX"></div>
+                    
+                    <div class="flex items-center gap-3 bg-black/20 p-2 rounded-lg border border-white/5">
+                        <input type="checkbox" id="terms-check" class="w-5 h-5 rounded cursor-pointer">
+                        <label for="terms-check" class="text-xs text-slate-400 cursor-pointer select-none">
+                            Li e aceito os <a href="Termos_e_condições.pdf" target="_blank" class="text-theme-dynamic font-bold hover:underline">Termos e Condições</a>
+                        </label>
+                    </div>
                 </div>
+                
                 <div><label class="text-xs font-bold text-gray-400 uppercase ml-1">E-mail</label><input type="email" id="email" class="input-glass w-full px-4 py-3 rounded-xl mt-1" required></div>
                 <div><label class="text-xs font-bold text-gray-400 uppercase ml-1">Senha</label><input type="password" id="password" class="input-glass w-full px-4 py-3 rounded-xl mt-1" required></div>
                 <button type="submit" id="btn-login" class="btn-theme w-full py-4 rounded-xl shadow-lg mt-4 cursor-pointer">ACESSAR SISTEMA</button>
             </form>
+            
             <div class="mt-6 text-center fade-in-slow"><button id="btn-toggle-register" class="text-slate-500 text-sm hover:text-white transition-colors">Não tem conta? <span class="text-theme-dynamic font-bold">Criar cadastro</span></button></div>
             <p id="auth-error" class="text-red-400 text-center text-sm mt-4 hidden"></p>
         </div>
@@ -293,6 +305,12 @@
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            if(isRegistering && !document.getElementById('terms-check').checked) {
+                alert("Você precisa ler e aceitar os Termos e Condições para criar a conta.");
+                return;
+            }
+
             const email = document.getElementById('email').value, password = document.getElementById('password').value, btn = document.getElementById('btn-login');
             btn.textContent = "Carregando..."; btn.disabled = true;
             try {
@@ -317,7 +335,6 @@
                 document.getElementById('xp-display').textContent = profile.xp; document.getElementById('lvl-display').textContent = profile.level;
                 document.getElementById('xp-bar').style.width = `${(profile.xp % 100)}%`;
                 
-                // Exibe botões ADM
                 if(profile.is_admin) {
                     document.getElementById('admin-broadcast-btn').classList.remove('hidden');
                     document.getElementById('admin-users-btn').classList.remove('hidden');
@@ -330,50 +347,24 @@
         async function gainXP(amount) { try { await client.rpc('add_xp', { amount: amount }); } catch(e) {} }
         function sanitizeFileName(name) { return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_'); }
 
-        // --- SISTEMA DE NOTIFICAÇÕES ---
         async function checkNotifications() {
             const { data } = await client.from('notifications').select('*').eq('user_id', currentUser.id).order('created_at', {ascending: false});
             const unreadCount = data ? data.filter(n => !n.is_read).length : 0;
-            if(unreadCount > 0) document.getElementById('notif-dot').classList.add('active');
-            else document.getElementById('notif-dot').classList.remove('active');
+            if(unreadCount > 0) document.getElementById('notif-dot').classList.add('active'); else document.getElementById('notif-dot').classList.remove('active');
         }
-
         async function openNotifications() {
-            document.getElementById('modal-notifications').classList.remove('hidden');
-            const list = document.getElementById('notif-list');
+            document.getElementById('modal-notifications').classList.remove('hidden'); const list = document.getElementById('notif-list');
             list.innerHTML = '<p class="text-slate-500 text-center text-sm py-4">Carregando...</p>';
-            
             const { data } = await client.from('notifications').select('*').eq('user_id', currentUser.id).order('created_at', {ascending: false});
-            list.innerHTML = '';
-            
-            if(!data || data.length === 0) {
-                list.innerHTML = '<p class="text-slate-500 text-center text-sm py-4">Nenhuma notificação.</p>';
-                return;
-            }
-
+            list.innerHTML = ''; if(!data || data.length === 0) { list.innerHTML = '<p class="text-slate-500 text-center text-sm py-4">Nenhuma notificação.</p>'; return; }
             const unreadIds = data.filter(n => !n.is_read).map(n => n.id);
-            if(unreadIds.length > 0) {
-                await client.from('notifications').update({is_read: true}).in('id', unreadIds);
-                document.getElementById('notif-dot').classList.remove('active');
-            }
-
+            if(unreadIds.length > 0) { await client.from('notifications').update({is_read: true}).in('id', unreadIds); document.getElementById('notif-dot').classList.remove('active'); }
             data.forEach(n => {
                 const date = new Date(n.created_at).toLocaleDateString('pt-BR');
-                const time = new Date(n.created_at).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-                list.innerHTML += `
-                    <div class="notification-item p-3 bg-black/40 rounded-lg mb-2 ${!n.is_read ? 'unread' : ''}">
-                        <div class="flex justify-between items-start">
-                            <h4 class="font-bold text-white text-sm">${n.title}</h4>
-                            <span class="text-[10px] text-slate-500">${date} ${time}</span>
-                        </div>
-                        <p class="text-xs text-slate-300 mt-1">${n.content}</p>
-                    </div>`;
+                list.innerHTML += `<div class="notification-item p-3 bg-black/40 rounded-lg mb-2 ${!n.is_read ? 'unread' : ''}"><div class="flex justify-between items-start"><h4 class="font-bold text-white text-sm">${n.title}</h4><span class="text-[10px] text-slate-500">${date}</span></div><p class="text-xs text-slate-300 mt-1">${n.content}</p></div>`;
             });
         }
-
-        // --- SISTEMA DE BROADCAST (ADM) ---
         function openBroadcastModal() { document.getElementById('modal-broadcast').classList.remove('hidden'); }
-        
         async function sendBroadcast() {
             if(!currentProfile.is_admin) return;
             const title = document.getElementById('bc-title').value, content = document.getElementById('bc-content').value;
@@ -388,72 +379,28 @@
                 document.getElementById('bc-title').value = ""; document.getElementById('bc-content').value = "";
             } catch(e) { alert("Erro: " + e.message); } finally { btn.textContent = "ENVIAR PARA TODOS"; btn.disabled = false; }
         }
-
-        // --- SISTEMA DE MENSAGEM PRIVADA (DM) ---
         async function openUsersList() {
-            if(!currentProfile.is_admin) return;
-            document.getElementById('modal-users').classList.remove('hidden');
+            if(!currentProfile.is_admin) return; document.getElementById('modal-users').classList.remove('hidden');
             const container = document.getElementById('users-list-container');
-            
             const { data: users } = await client.from('profiles').select('*').order('nickname', {ascending: true});
-            container.innerHTML = '';
-            
-            if(!users) { container.innerHTML = 'Erro ao carregar.'; return; }
-
+            container.innerHTML = ''; if(!users) { container.innerHTML = 'Erro ao carregar.'; return; }
             users.forEach(user => {
                 const name = user.nickname || user.email;
-                container.innerHTML += `
-                    <div class="flex items-center justify-between bg-white/5 p-3 rounded-lg border border-white/5 hover:border-blue-500/50 transition">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center font-bold text-xs">${user.avatar_text || '?'}</div>
-                            <div>
-                                <p class="font-bold text-sm text-white">${name}</p>
-                                <p class="text-[10px] text-slate-500">Nível ${user.level}</p>
-                            </div>
-                        </div>
-                        <button onclick="openDirectMsg('${user.id}', '${name}')" class="bg-blue-600 hover:bg-blue-500 text-white w-8 h-8 rounded flex items-center justify-center shadow-lg transition">
-                            <i class="fas fa-envelope"></i>
-                        </button>
-                    </div>`;
+                container.innerHTML += `<div class="flex items-center justify-between bg-white/5 p-3 rounded-lg border border-white/5 hover:border-blue-500/50 transition"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center font-bold text-xs">${user.avatar_text || '?'}</div><div><p class="font-bold text-sm text-white">${name}</p><p class="text-[10px] text-slate-500">Nível ${user.level}</p></div></div><button onclick="openDirectMsg('${user.id}', '${name}')" class="bg-blue-600 hover:bg-blue-500 text-white w-8 h-8 rounded flex items-center justify-center shadow-lg transition"><i class="fas fa-envelope"></i></button></div>`;
             });
         }
-
-        function openDirectMsg(userId, userName) {
-            document.getElementById('modal-dm').classList.remove('hidden');
-            document.getElementById('dm-target-id').value = userId;
-            document.getElementById('dm-target-name').innerText = userName;
-        }
-
+        function openDirectMsg(userId, userName) { document.getElementById('modal-dm').classList.remove('hidden'); document.getElementById('dm-target-id').value = userId; document.getElementById('dm-target-name').innerText = userName; }
         async function sendDirectMessage() {
-            const userId = document.getElementById('dm-target-id').value;
-            const title = document.getElementById('dm-title').value;
-            const content = document.getElementById('dm-content').value;
-            
+            const userId = document.getElementById('dm-target-id').value, title = document.getElementById('dm-title').value, content = document.getElementById('dm-content').value;
             if(!title || !content) return alert("Escreva algo!");
-            
             const btn = event.target; btn.innerText = "ENVIANDO..."; btn.disabled = true;
-
             try {
-                const { error } = await client.from('notifications').insert({
-                    user_id: userId,
-                    title: `Mensagem Privada: ${title}`,
-                    content: content
-                });
-                
-                if(error) throw error;
-                
-                alert("Mensagem enviada com sucesso!");
-                document.getElementById('modal-dm').classList.add('hidden');
-                document.getElementById('dm-title').value = "";
-                document.getElementById('dm-content').value = "";
-            } catch(e) {
-                alert("Erro: " + e.message);
-            } finally {
-                btn.innerText = "ENVIAR"; btn.disabled = false;
-            }
+                const { error } = await client.from('notifications').insert({ user_id: userId, title: `Mensagem Privada: ${title}`, content: content });
+                if(error) throw error; alert("Enviada!"); document.getElementById('modal-dm').classList.add('hidden');
+                document.getElementById('dm-title').value = ""; document.getElementById('dm-content').value = "";
+            } catch(e) { alert("Erro: " + e.message); } finally { btn.innerText = "ENVIAR"; btn.disabled = false; }
         }
 
-        // --- FUNÇÕES ANTIGAS (Mantidas) ---
         async function loadPoll() {
             const container = document.getElementById('poll-container'), adminBtn = document.getElementById('admin-poll-btn');
             if(currentProfile && currentProfile.is_admin) adminBtn.innerHTML = `<button onclick="createPoll()" class="text-[10px] bg-theme-dynamic hover:brightness-110 text-white px-2 py-1 rounded font-bold transition"><i class="fas fa-plus"></i></button>`;
